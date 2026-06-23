@@ -1,0 +1,68 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id             String         @id // Stack Auth user ID
+  email          String         @unique
+  name           String?
+  avatarUrl      String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  settings       UserSettings?
+  libraryEntries LibraryEntry[]
+  collections    Collection[]
+}
+
+model UserSettings {
+  id               String   @id @default(cuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id])
+  preferredGenres  String   @default("[]")
+  defaultSort      String   @default("SCORE_DESC")
+  layoutPreference String   @default("grid")
+  updatedAt        DateTime @updatedAt
+}
+
+// status values: WATCHING | COMPLETED | PLAN_TO_WATCH | ON_HOLD | DROPPED
+model LibraryEntry {
+  id             String           @id @default(cuid())
+  anilistId      Int
+  status         String
+  personalRating Float?
+  isFavorite     Boolean          @default(false)
+  notes          String?
+  startedAt      DateTime?
+  completedAt    DateTime?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  userId         String
+  user           User             @relation(fields: [userId], references: [id])
+  collections    CollectionItem[]
+
+  @@unique([userId, anilistId])
+}
+
+model Collection {
+  id        String           @id @default(cuid())
+  name      String
+  createdAt DateTime         @default(now())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id])
+  items     CollectionItem[]
+}
+
+model CollectionItem {
+  id             String       @id @default(cuid())
+  addedAt        DateTime     @default(now())
+  collectionId   String
+  libraryEntryId String
+  collection     Collection   @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  libraryEntry   LibraryEntry @relation(fields: [libraryEntryId], references: [id], onDelete: Cascade)
+
+  @@unique([collectionId, libraryEntryId])
+}
