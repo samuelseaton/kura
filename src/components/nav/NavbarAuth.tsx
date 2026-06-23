@@ -59,7 +59,7 @@ export function NavbarAuth() {
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive" onClick={handleSignOut} className="focus:bg-destructive/20 cursor-pointer">
+            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer focus:bg-destructive/10 focus:text-destructive">
               Sign out
             </DropdownMenuItem>
           </DropdownMenuContent>

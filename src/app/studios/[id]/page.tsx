@@ -1,6 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ExternalLink, ChevronLeft } from 'lucide-react';
+import { ExternalLink } from 'lucide-react';
+import { BackButton } from '@/components/ui/back-button';
 import { AnimeCard } from '@/modules/explore/components/AnimeCard';
 import { getStudioDetail, getTopStudioIds } from '@/lib/anilist';
 
@@ -23,13 +24,7 @@ export default async function StudioDetailPage({
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <Link
-        href="/studios"
-        className="mb-6 flex items-center gap-1 text-sm text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ChevronLeft className="h-4 w-4" />
-        All Studios
-      </Link>
+      <BackButton />
 
       <div className="mb-8 flex items-start justify-between">
         <div>

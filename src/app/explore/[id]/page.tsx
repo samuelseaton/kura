@@ -6,6 +6,7 @@ import { AnimeCard } from '@/modules/explore/components/AnimeCard';
 import { LibraryButton } from '@/modules/vault/components/LibraryButton';
 import { Star, Tv, Calendar } from 'lucide-react';
 import { getAnimeDetail, getTopAnimeIds } from '@/lib/anilist';
+import { BackButton } from '@/components/ui/back-button';
 
 export const revalidate = 86400;
 
@@ -25,7 +26,8 @@ export default async function AnimeDetailPage({
   if (!anime) notFound();
 
   return (
-    <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
+    <div className="mx-auto max-w-5xl px-4 pb-16 pt-8 sm:px-6">
+      <BackButton />
       {anime.bannerUrl && (
         <div className="relative -mx-4 mb-6 h-48 overflow-hidden sm:-mx-6 md:mx-0 md:rounded-xl">
           <Image

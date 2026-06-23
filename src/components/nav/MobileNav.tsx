@@ -28,6 +28,7 @@ function MobileAuthFooter() {
     <SheetFooter className="border-t border-border/50 pt-4">
       <SignedOut>
         <SheetClose
+          nativeButton={false}
           render={
             <Link
               href="/auth/sign-in"
@@ -42,6 +43,7 @@ function MobileAuthFooter() {
         <div className="flex flex-col gap-1">
           <p className="px-2 text-xs text-muted-foreground truncate">{user?.email}</p>
           <SheetClose
+            nativeButton={false}
             render={
               <Link href="/settings" className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'justify-start active:translate-y-0 active:bg-white/15 active:opacity-100')} />
             }
@@ -50,7 +52,7 @@ function MobileAuthFooter() {
           </SheetClose>
           <button
             onClick={handleSignOut}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'justify-start text-destructive hover:bg-white/10 active:translate-y-0 active:bg-white/15 active:opacity-100')}
+            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'justify-start hover:text-destructive active:translate-y-0 active:bg-white/15 active:opacity-100')}
           >
             Sign out
           </button>
@@ -77,6 +79,7 @@ export function MobileNav({ links }: { links: NavLink[] }) {
           {links.map(({ href, label }) => (
             <SheetClose
               key={href}
+              nativeButton={false}
               render={
                 <Link
                   href={href}

@@ -35,7 +35,7 @@ export const AnimeCard = memo(function AnimeCard({
     <>
       <button
         onClick={() => setOpen(true)}
-        className="group block w-full text-left"
+        className="group block w-full cursor-pointer text-left"
       >
         <article className="overflow-hidden rounded-xl border border-border/50 bg-card transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5 hover:scale-[1.02]">
           <div className="relative aspect-[2/3] w-full overflow-hidden bg-muted">
@@ -119,7 +119,6 @@ export const AnimeCard = memo(function AnimeCard({
               {studio && (
                 <Link
                   href={`/studios/${studio.id}`}
-                  onClick={() => setOpen(false)}
                   className="w-fit text-sm font-medium text-primary hover:underline"
                 >
                   {studio.name}
@@ -147,7 +146,6 @@ export const AnimeCard = memo(function AnimeCard({
           <div className="border-t border-border px-5 py-3">
             <Link
               href={`/explore/${id}`}
-              onClick={() => setOpen(false)}
               className={cn(buttonVariants({ variant: 'outline' }), 'w-full')}
             >
               View Details

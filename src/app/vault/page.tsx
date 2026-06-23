@@ -26,7 +26,7 @@ function RemoveEntryButton({ anilistId }: { anilistId: number }) {
       disabled={loading}
       className={cn(
         buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
-        'shrink-0 text-muted-foreground hover:bg-white/10 disabled:opacity-50'
+        'shrink-0 text-muted-foreground hover:text-destructive disabled:opacity-50'
       )}
     >
       {loading ? (
