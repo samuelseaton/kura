@@ -119,10 +119,10 @@ export const GENRE_COLLECTION_QUERY = `
 
 /** Paginated studio list sorted by AniList favourites count. Includes one cover image per studio. */
 export const STUDIO_LIST_QUERY = `
-  query ($page: Int, $perPage: Int) {
+  query ($page: Int, $perPage: Int, $search: String) {
     Page(page: $page, perPage: $perPage) {
       pageInfo { hasNextPage }
-      studios(sort: FAVOURITES_DESC) {
+      studios(search: $search, sort: FAVOURITES_DESC) {
         id
         favourites
         media(sort: SCORE_DESC, perPage: 1) {

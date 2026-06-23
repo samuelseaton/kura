@@ -44,7 +44,7 @@ export const ME_QUERY: TypedDocumentNode<MeData, Record<string, never>> = gql`
   query Me {
     me {
       id
-i      collections {
+      collections {
         id
         createdAt
         items {

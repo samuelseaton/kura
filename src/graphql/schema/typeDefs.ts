@@ -144,7 +144,7 @@ export const typeDefs = gql`
     media(id: ID!): MediaDetail
     mediaByIds(ids: [ID!]!): [Media!]!
     genres: [String!]!
-    studioList(page: Int, perPage: Int): StudioListResult!
+    studioList(page: Int, perPage: Int, search: String): StudioListResult!
     studio(id: ID!): StudioDetail
     me: User
   }

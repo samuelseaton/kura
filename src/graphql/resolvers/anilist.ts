@@ -91,7 +91,7 @@ export const anilistResolvers = {
 
     studioList: async (
       _: unknown,
-      { page = 1, perPage = 25 }: { page?: number; perPage?: number }
+      { page = 1, perPage = 25, search }: { page?: number; perPage?: number; search?: string }
     ) => {
       const data = await anilistFetch<{
         Page: {
@@ -103,7 +103,7 @@ export const anilistResolvers = {
             media: { nodes: { coverImage?: { large?: string } }[] };
           }[];
         };
-      }>(STUDIO_LIST_QUERY, { page, perPage });
+      }>(STUDIO_LIST_QUERY, { page, perPage, search: search || undefined });
 
       return {
         items: data.Page.studios.map(s => ({

@@ -96,7 +96,6 @@ export default function ExplorePage() {
             onReset={handleReset}
             search={search}
             onSearchChange={setSearch}
-            hideSearch
           />
         </div>
 

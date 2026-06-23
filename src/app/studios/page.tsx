@@ -5,20 +5,28 @@ import { useEffect, useState } from 'react';
 import { StudioCard } from '@/modules/studios/components/StudioCard';
 import { AnimeCardSkeleton } from '@/modules/explore/components/AnimeCardSkeleton';
 import { STUDIO_LIST_QUERY } from '@/modules/studios/queries/studioList.gql';
+import { useDebounce } from '@/modules/explore/hooks/useDebounce';
+import { Input } from '@/components/ui/input';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Search } from 'lucide-react';
 
 import type { StudioItem } from '@/modules/studios/queries/studioList.gql';
 
 export default function StudiosPage() {
   const [page, setPage] = useState(1);
   const [allStudios, setAllStudios] = useState<StudioItem[]>([]);
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 400);
 
-  const { data, loading, error, fetchMore } = useQuery(STUDIO_LIST_QUERY,
-    {
-      variables: { page: 1, perPage: 30 },
-    }
-  );
+  const { data, loading, error, fetchMore } = useQuery(STUDIO_LIST_QUERY, {
+    variables: { page: 1, perPage: 30, search: debouncedSearch || undefined },
+  });
+
+  useEffect(() => {
+    setAllStudios([]);
+    setPage(1);
+  }, [debouncedSearch]);
 
   useEffect(() => {
     if (data?.studioList?.items) {
@@ -30,7 +38,7 @@ export default function StudiosPage() {
   const handleLoadMore = async () => {
     const nextPage = page + 1;
     const result = await fetchMore({
-      variables: { page: nextPage, perPage: 30 },
+      variables: { page: nextPage, perPage: 30, search: debouncedSearch || undefined },
     });
     const newStudios = result.data?.studioList?.items ?? [];
     setAllStudios(prev => [...prev, ...newStudios]);
@@ -52,11 +60,22 @@ export default function StudiosPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">Animation Studios</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Browse the studios behind your favourite anime
-        </p>
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Animation Studios</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Browse the studios behind your favourite anime
+          </p>
+        </div>
+        <div className="relative w-full sm:w-64">
+          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search studios..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-8"
+          />
+        </div>
       </div>
 
       {loading && allStudios.length === 0 ? (

@@ -18,7 +18,6 @@ const SORT_OPTIONS: { value: MediaSort; label: string }[] = [
 
 interface FilterSidebarProps {
   filter: MediaFilter;
-  hideSearch?: boolean;
   search: string;
   onFilterChange: (patch: Partial<MediaFilter>) => void;
   onReset: () => void;
@@ -27,7 +26,6 @@ interface FilterSidebarProps {
 
 export function FilterSidebar({
   filter,
-  hideSearch,
   search,
   onFilterChange,
   onReset,
@@ -47,18 +45,16 @@ export function FilterSidebar({
 
   return (
     <aside className="flex flex-col gap-6">
-      {/* Search – hidden on mobile since it lives in the page header there */}
-      {!hideSearch && (
-        <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search anime..."
-            value={search}
-            onChange={e => onSearchChange(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-      )}
+      {/* Search – hidden on mobile (header bar handles it there), visible on desktop */}
+      <div className="relative hidden md:block">
+        <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search anime..."
+          value={search}
+          onChange={e => onSearchChange(e.target.value)}
+          className="pl-8"
+        />
+      </div>
 
       {/* Sort */}
       <div>

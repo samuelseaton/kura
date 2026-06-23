@@ -10,10 +10,10 @@ export interface StudioItem {
 
 export const STUDIO_LIST_QUERY: TypedDocumentNode<
   { studioList: { hasNextPage: boolean; items: StudioItem[] } },
-  { page?: number; perPage?: number }
+  { page?: number; perPage?: number; search?: string }
 > = gql`
-  query StudioList($page: Int, $perPage: Int) {
-    studioList(page: $page, perPage: $perPage) {
+  query StudioList($page: Int, $perPage: Int, $search: String) {
+    studioList(page: $page, perPage: $perPage, search: $search) {
       hasNextPage
       items {
         id
