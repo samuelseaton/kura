@@ -1,262 +1,206 @@
 "use client";
 
-/* ─── Option A: Node Lettermark ────────────────────────────────────────────
-   The letter "A" drawn as 5 graph nodes connected by violet lines.
-   Nodes pulse in staggered sequence.
-────────────────────────────────────────────────────────────────────────── */
-function LogoNodeA({ size = 40 }: { size?: number }) {
-  const s = size;
-  const r = s * 0.065;
-  const sw = s * 0.038;
+/* ─── Shared animation keyframes ─────────────────────────────────────── */
+const KEYFRAMES = `
+  @keyframes drawIn {
+    from { stroke-dashoffset: 1; opacity: 0.2; }
+    to   { stroke-dashoffset: 0; opacity: 1; }
+  }
+  @keyframes glowPulse {
+    0%, 100% { opacity: 0.85; }
+    50%       { opacity: 1; }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+`;
 
-  const nodes = [
-    { cx: s * 0.5,  cy: s * 0.06 },  // peak
-    { cx: s * 0.06, cy: s * 0.94 },  // bottom-left
-    { cx: s * 0.94, cy: s * 0.94 },  // bottom-right
-    { cx: s * 0.32, cy: s * 0.56 },  // crossbar-left
-    { cx: s * 0.68, cy: s * 0.56 },  // crossbar-right
-  ];
-  const edges: [number, number][] = [[0, 1], [0, 2], [3, 4]];
-  const delays = [0, 0.6, 1.0, 0.3, 0.8];
+/* ─── Option A: ク Katakana mark ────────────────────────────────────────
+   Two strokes of the katakana character ク.
+   Strokes draw in sequentially, then glow pulses.
+────────────────────────────────────────────────────────────────────────── */
+function LogoKu({ size = 40 }: { size?: number }) {
+  const id = `ku-${size}`;
+  const sw = size * 0.13;
 
   return (
-    <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} style={{ overflow: "visible" }}>
+    <svg width={size} height={size * 56/48} viewBox="0 0 48 56" style={{ overflow: "visible" }}>
       <defs>
         <style>{`
-          @keyframes logoNodePulse {
-            0%, 100% { opacity: 0.35; }
-            50% { opacity: 1; }
-          }
-          @keyframes logoLinePulse {
-            0%, 100% { opacity: 0.25; }
-            50% { opacity: 0.7; }
-          }
-          ${nodes.map((_, i) => `
-            .lna-node-${i} {
-              animation: logoNodePulse 2.4s ease-in-out ${delays[i]}s infinite;
-            }
-          `).join("")}
-          .lna-edge {
-            animation: logoLinePulse 2.4s ease-in-out infinite;
-          }
+          ${KEYFRAMES}
+          .${id}-bar   { opacity: 0; animation: fadeIn 0.4s ease-out 0.05s forwards, glowPulse 3s ease-in-out 0.5s infinite; }
+          .${id}-sweep { opacity: 0; animation: fadeIn 0.5s ease-out 0.35s forwards, glowPulse 3s ease-in-out 0.85s infinite; }
         `}</style>
-        <filter id="lna-glow">
-          <feGaussianBlur stdDeviation={s * 0.04} result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        <filter id={`${id}-glow`}>
+          <feGaussianBlur stdDeviation="2.5" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
-
-      {edges.map(([a, b], i) => (
-        <line
-          key={i}
-          x1={nodes[a].cx} y1={nodes[a].cy}
-          x2={nodes[b].cx} y2={nodes[b].cy}
-          stroke="#a855f7"
-          strokeWidth={sw}
-          strokeLinecap="round"
-          className="lna-edge"
-        />
-      ))}
-      {nodes.map((n, i) => (
-        <circle
-          key={i}
-          cx={n.cx} cy={n.cy} r={r}
-          fill="#a855f7"
-          filter="url(#lna-glow)"
-          className={`lna-node-${i}`}
-        />
-      ))}
+      {/* Horizontal bar — top portion of ク */}
+      <path d="M 7,20 L 36,20" fill="none" stroke="#a855f7" strokeWidth={sw}
+        strokeLinecap="round" className={`${id}-bar`} filter={`url(#${id}-glow)`} />
+      {/* Sweep — from upper-right curving down to lower-left */}
+      <path d="M 32,8 C 46,14 46,38 30,50 L 12,56" fill="none" stroke="#a855f7" strokeWidth={sw}
+        strokeLinecap="round" className={`${id}-sweep`} filter={`url(#${id}-glow)`} />
     </svg>
   );
 }
 
-/* ─── Option B: Orbital ─────────────────────────────────────────────────────
-   A large center node with a smaller node orbiting it.
-   The orbit line and outer node glow, leaving a fading arc.
+/* ─── Option B: Geometric K ─────────────────────────────────────────────
+   Three strokes forming a bold K. Each draws in with a stagger,
+   then a gradient sweep replays on a loop.
 ────────────────────────────────────────────────────────────────────────── */
-function LogoOrbital({ size = 40 }: { size?: number }) {
-  const s = size;
-  const cx = s / 2;
-  const cy = s / 2;
-  const orbitR = s * 0.35;
-  const nodeR = s * 0.08;
-  const dotR = s * 0.05;
+function LogoK({ size = 40 }: { size?: number }) {
+  const id = `k-${size}`;
+  const u = size / 48;
+  const sw = size * 0.115;
+
+  const strokes = [
+    { d: `M ${10*u},${6*u} L ${10*u},${42*u}`, delay: 0.0 },
+    { d: `M ${10*u},${24*u} L ${38*u},${6*u}`,  delay: 0.3 },
+    { d: `M ${10*u},${24*u} L ${38*u},${42*u}`, delay: 0.55 },
+  ];
 
   return (
-    <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} style={{ overflow: "visible" }}>
+    <svg width={size} height={size} viewBox={`0 0 ${48*u} ${48*u}`} style={{ overflow: "visible" }}>
       <defs>
         <style>{`
-          @keyframes orbit {
-            from { transform: rotate(0deg); }
-            to   { transform: rotate(360deg); }
-          }
-          @keyframes centerPulse {
-            0%, 100% { opacity: 0.7; }
-            50% { opacity: 1; }
-          }
-          .orb-ring {
-            animation: orbit 3s linear infinite;
-            transform-origin: ${cx}px ${cy}px;
-          }
-          .orb-center {
-            animation: centerPulse 3s ease-in-out infinite;
-          }
+          ${KEYFRAMES}
+          ${strokes.map((_, i) => `
+            .${id}-s${i} { stroke-dasharray:1; stroke-dashoffset:1;
+              animation: drawIn 0.5s ease-out ${strokes[i].delay}s forwards,
+                         glowPulse 3s ease-in-out ${0.5 + strokes[i].delay}s infinite; }
+          `).join("")}
         `}</style>
-        <filter id="orb-glow">
-          <feGaussianBlur stdDeviation={s * 0.05} result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        <filter id={`${id}-glow`}>
+          <feGaussianBlur stdDeviation={size * 0.07} result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
-        <linearGradient id="arc-grad" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="#a855f7" stopOpacity="0" />
-          <stop offset="100%" stopColor="#a855f7" stopOpacity="0.6" />
+        <linearGradient id={`${id}-grad`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%"   stopColor="#c084fc" />
+          <stop offset="100%" stopColor="#7c3aed" />
         </linearGradient>
       </defs>
-
-      {/* Orbit track */}
-      <circle cx={cx} cy={cy} r={orbitR} fill="none" stroke="#a855f7" strokeWidth={s * 0.012} opacity={0.15} />
-
-      {/* Center node */}
-      <circle cx={cx} cy={cy} r={nodeR} fill="#a855f7" className="orb-center" filter="url(#orb-glow)" />
-
-      {/* Orbiting group */}
-      <g className="orb-ring">
-        {/* Line from center to dot */}
-        <line
-          x1={cx} y1={cy}
-          x2={cx + orbitR} y2={cy}
-          stroke="#a855f7" strokeWidth={s * 0.018} opacity={0.4}
-        />
-        {/* Orbiting dot */}
-        <circle cx={cx + orbitR} cy={cy} r={dotR} fill="#c084fc" filter="url(#orb-glow)" />
-      </g>
+      {strokes.map((s, i) => (
+        <path key={i} d={s.d} fill="none"
+          stroke={`url(#${id}-grad)`}
+          strokeWidth={sw} strokeLinecap="round" pathLength={1}
+          className={`${id}-s${i}`} filter={`url(#${id}-glow)`} />
+      ))}
     </svg>
   );
 }
 
-/* ─── Option C: Constellation ───────────────────────────────────────────────
-   7 nodes in a tight cluster, edges light up in a travelling wave.
+/* ─── Option C: Vault rings ─────────────────────────────────────────────
+   Three concentric arcs that draw in from 0 with a stagger,
+   plus a center node. Suggests depth, collection, and storage.
 ────────────────────────────────────────────────────────────────────────── */
-function LogoConstellation({ size = 40 }: { size?: number }) {
-  const s = size;
-
-  const nodes = [
-    { cx: s * 0.5,  cy: s * 0.1  },  // 0 top
-    { cx: s * 0.82, cy: s * 0.32 },  // 1 top-right
-    { cx: s * 0.75, cy: s * 0.72 },  // 2 bottom-right
-    { cx: s * 0.5,  cy: s * 0.9  },  // 3 bottom
-    { cx: s * 0.25, cy: s * 0.72 },  // 4 bottom-left
-    { cx: s * 0.18, cy: s * 0.32 },  // 5 top-left
-    { cx: s * 0.5,  cy: s * 0.5  },  // 6 center
+function LogoVault({ size = 40 }: { size?: number }) {
+  const id = `v-${size}`;
+  const cx = size / 2;
+  const cy = size / 2;
+  const arcs = [
+    { r: size * 0.42, sw: size * 0.07, delay: 0.0, opacity: 1.0 },
+    { r: size * 0.29, sw: size * 0.07, delay: 0.2, opacity: 0.75 },
+    { r: size * 0.16, sw: size * 0.07, delay: 0.4, opacity: 0.55 },
   ];
-  const edges: [number, number][] = [
-    [0,1],[1,2],[2,3],[3,4],[4,5],[5,0],
-    [6,0],[6,2],[6,4],
-  ];
-  const nodeDelays = [0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.2];
-  const edgeDelays = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.05, 0.25, 0.45];
 
   return (
-    <svg width={s} height={s} viewBox={`0 0 ${s} ${s}`} style={{ overflow: "visible" }}>
+    <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ overflow: "visible" }}>
       <defs>
         <style>{`
-          @keyframes conNode {
-            0%, 100% { opacity: 0.3; r: ${s * 0.045}px; }
-            50% { opacity: 1; r: ${s * 0.07}px; }
+          ${KEYFRAMES}
+          ${arcs.map((a, i) => `
+            .${id}-arc-${i} {
+              stroke-dasharray: 1; stroke-dashoffset: 1;
+              animation: drawIn 0.8s cubic-bezier(0.4,0,0.2,1) ${a.delay}s forwards,
+                         glowPulse 3s ease-in-out ${0.8 + a.delay}s infinite;
+            }
+          `).join("")}
+          .${id}-dot {
+            animation: fadeIn 0.3s ease-out 0.7s both,
+                       glowPulse 3s ease-in-out 1s infinite;
           }
-          @keyframes conEdge {
-            0%, 100% { opacity: 0.1; }
-            50% { opacity: 0.65; }
-          }
-          ${nodeDelays.map((d, i) => `.con-n${i} { animation: conNode 2.8s ease-in-out ${d}s infinite; }`).join("\n          ")}
-          ${edgeDelays.map((d, i) => `.con-e${i} { animation: conEdge 2.8s ease-in-out ${d}s infinite; }`).join("\n          ")}
         `}</style>
-        <filter id="con-glow">
-          <feGaussianBlur stdDeviation={s * 0.035} result="blur" />
-          <feMerge><feMergeNode in="blur" /><feMergeNode in="SourceGraphic" /></feMerge>
+        <filter id={`${id}-glow`}>
+          <feGaussianBlur stdDeviation={size * 0.06} result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
         </filter>
       </defs>
 
-      {edges.map(([a, b], i) => (
-        <line
-          key={i}
-          x1={nodes[a].cx} y1={nodes[a].cy}
-          x2={nodes[b].cx} y2={nodes[b].cy}
-          stroke="#a855f7"
-          strokeWidth={s * 0.025}
-          strokeLinecap="round"
-          className={`con-e${i}`}
-        />
+      {arcs.map((a, i) => (
+        <circle key={i} cx={cx} cy={cy} r={a.r}
+          fill="none" stroke="#a855f7" strokeWidth={a.sw} strokeLinecap="round"
+          strokeDasharray={`${Math.PI * 1.5} ${Math.PI * 0.5}`}
+          pathLength={1} className={`${id}-arc-${i}`}
+          style={{ opacity: a.opacity }} filter={`url(#${id}-glow)`}
+          transform={`rotate(-120 ${cx} ${cy})`} />
       ))}
-      {nodes.map((n, i) => (
-        <circle
-          key={i}
-          cx={n.cx} cy={n.cy} r={s * 0.055}
-          fill="#a855f7"
-          filter="url(#con-glow)"
-          className={`con-n${i}`}
-        />
-      ))}
+      <circle cx={cx} cy={cy} r={size * 0.06}
+        fill="#c084fc" className={`${id}-dot`} filter={`url(#${id}-glow)`} />
     </svg>
   );
 }
 
 /* ─── Preview page ─────────────────────────────────────────────────────── */
-const options = [
+const OPTIONS = [
   {
     id: "A",
-    name: "Node Lettermark",
-    description: 'The "A" in Kura drawn as graph nodes. Staggered pulse animation.',
-    Logo: LogoNodeA,
+    name: "ク Katakana",
+    description: 'Two strokes of the katakana character ク — the first syllable of Kura. Draws in, then glows. Unique to any other app.',
+    Logo: LogoKu,
   },
   {
     id: "B",
-    name: "Orbital",
-    description: "A center node with a smaller node orbiting it. Suggests exploration and graph traversal.",
-    Logo: LogoOrbital,
+    name: "Geometric K",
+    description: "Bold K, three strokes drawing in with a purple gradient. Clean and legible at any size.",
+    Logo: LogoK,
   },
   {
     id: "C",
-    name: "Constellation",
-    description: "A 7-node cluster with edges lighting up in a travelling wave.",
-    Logo: LogoConstellation,
+    name: "Vault Rings",
+    description: "Three concentric arcs drawing in sequence. Abstract, modern — suggests depth and collection.",
+    Logo: LogoVault,
   },
 ];
 
 export default function LogoPreviewPage() {
   return (
-    <div className="mx-auto max-w-4xl px-6 py-12 space-y-16">
-      <div>
-        <p className="text-sm text-muted-foreground mb-1">Logo concepts — all animated. Tell me which one you want.</p>
-        <p className="text-xs text-muted-foreground">Shown at nav size (32px) and hero size (96px).</p>
-      </div>
+    <div className="mx-auto max-w-4xl px-6 py-12 space-y-14">
+      <p className="text-sm text-muted-foreground">
+        Three animated logo concepts. Tell me A, B, or C.
+      </p>
 
-      {options.map(({ id, name, description, Logo }) => (
-        <div key={id} className="rounded-2xl border border-border/50 bg-card p-8">
-          <div className="flex items-start gap-6 mb-8">
-            <div className="text-3xl font-bold text-primary">{id}</div>
+      {OPTIONS.map(({ id, name, description, Logo }) => (
+        <div key={id} className="rounded-2xl border border-border/50 bg-card p-8 space-y-8">
+          <div className="flex items-start gap-5">
+            <span className="text-3xl font-bold text-primary leading-none">{id}</span>
             <div>
               <h2 className="text-lg font-bold">{name}</h2>
-              <p className="text-sm text-muted-foreground mt-0.5">{description}</p>
+              <p className="text-sm text-muted-foreground mt-0.5 max-w-lg">{description}</p>
             </div>
           </div>
 
-          {/* Nav size */}
-          <div className="mb-8">
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Nav size</p>
-            <div className="flex items-center gap-3 rounded-xl bg-background px-4 py-3 w-fit border border-border/40">
-              <Logo size={32} />
-              <span className="text-lg font-bold tracking-tight text-primary">Kura</span>
+          <div className="grid grid-cols-2 gap-4">
+            {/* Nav preview */}
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Navbar</p>
+              <div className="flex items-center gap-2.5 rounded-xl border border-border/40 bg-background px-4 py-3 w-fit">
+                <Logo size={28} />
+                <span className="text-base font-bold tracking-tight text-primary">Kura</span>
+              </div>
             </div>
-          </div>
 
-          {/* Hero size */}
-          <div>
-            <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Hero size</p>
-            <div className="flex flex-col items-center gap-4 rounded-xl bg-background py-12 border border-border/40">
-              <Logo size={96} />
-              <div className="text-center">
-                <p className="text-4xl font-bold tracking-tight text-primary">Kura</p>
-                <p className="text-sm text-muted-foreground mt-1">Discover anime through studio DNA</p>
+            {/* Hero preview */}
+            <div>
+              <p className="text-xs text-muted-foreground uppercase tracking-widest mb-3">Hero</p>
+              <div className="flex items-center gap-5 rounded-xl border border-border/40 bg-background px-6 py-5">
+                <Logo size={72} />
+                <div>
+                  <p className="text-3xl font-bold tracking-tight text-primary leading-tight">Kura</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">Your personal anime library</p>
+                </div>
               </div>
             </div>
           </div>
