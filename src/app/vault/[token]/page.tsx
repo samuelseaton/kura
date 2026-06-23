@@ -155,7 +155,7 @@ export default function PublicVaultPage({
                           {mediaLoading && !media ? (
                             <Skeleton className="h-4 w-2/3" />
                           ) : (
-                            <p className="font-medium leading-tight line-clamp-1">
+                            <p className="font-medium leading-tight line-clamp-2">
                               {media?.title ?? `#${entry.anilistId}`}
                             </p>
                           )}
