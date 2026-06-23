@@ -37,15 +37,7 @@ export function LibraryButton({ anilistId }: LibraryButtonProps) {
 
   const { user } = useAuthenticate({ enabled: false });
 
-  const { data: meData } = useQuery<{
-    me: {
-      libraryEntries: {
-        anilistId: number;
-        status: string;
-        personalRating: number | null;
-      }[];
-    } | null;
-  }>(ME_QUERY, { skip: !user });
+  const { data: meData } = useQuery(ME_QUERY, { skip: !user });
 
   const [upsert] = useMutation(UPSERT_LIBRARY_ENTRY, {
     refetchQueries: [{ query: ME_QUERY }],

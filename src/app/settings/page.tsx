@@ -22,20 +22,11 @@ const SORT_OPTIONS = [
 export default function SettingsPage() {
   const { user, isPending } = useAuthenticate();
 
-  const { data: meData, loading: meLoading } = useQuery<{
-    me: {
-      id: string;
-      name: string | null;
-      email: string;
-      settings: {
-        preferredGenres: string[];
-        defaultSort: string;
-        layoutPreference: string;
-      } | null;
-    } | null;
-  }>(ME_QUERY, { skip: !user });
+  const { data: meData, loading: meLoading } = useQuery(ME_QUERY, {
+    skip: !user,
+  });
 
-  const { data: genresData } = useQuery<{ genres: string[] }>(GENRES_QUERY);
+  const { data: genresData } = useQuery(GENRES_QUERY);
 
   const [updateSettings, { loading: saving }] = useMutation(UPDATE_SETTINGS, {
     refetchQueries: [{ query: ME_QUERY }],

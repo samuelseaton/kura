@@ -3,6 +3,7 @@
 import { useState, useCallback, useTransition, useEffect } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { MEDIA_LIST_QUERY } from '../queries/animeList.gql';
+import type { AnimeItem } from '../queries/animeList.gql';
 
 export type MediaSort =
   | 'SCORE_DESC'
@@ -14,25 +15,6 @@ export interface MediaFilter {
   search: string;
   genres: string[];
   sort: MediaSort;
-}
-
-interface AnimeItem {
-  id: string;
-  title: string;
-  posterUrl: string;
-  rating: number | null;
-  episodeCount: number | null;
-  status: string | null;
-  genres: string[];
-  studio: { id: string; name: string } | null;
-}
-
-interface MediaListData {
-  mediaList: {
-    items: AnimeItem[];
-    total: number;
-    hasNextPage: boolean;
-  };
 }
 
 const DEFAULT_FILTER: MediaFilter = {
@@ -47,8 +29,7 @@ export function useAnimeFilter() {
   const [accItems, setAccItems] = useState<AnimeItem[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  const { data, loading, fetchMore } = useQuery<MediaListData>(
-    MEDIA_LIST_QUERY,
+  const { data, loading, fetchMore } = useQuery(MEDIA_LIST_QUERY,
     {
       variables: {
         filter: {
@@ -89,7 +70,7 @@ export function useAnimeFilter() {
         },
       },
     });
-    const newItems = (result.data as MediaListData)?.mediaList?.items ?? [];
+    const newItems = result.data?.mediaList?.items ?? [];
     setAccItems(prev => [...prev, ...newItems]);
     setPage(nextPage);
   }, [page, filter, fetchMore]);

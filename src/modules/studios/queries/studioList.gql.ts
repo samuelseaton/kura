@@ -1,6 +1,17 @@
 import { gql } from 'graphql-tag';
+import type { TypedDocumentNode } from '@apollo/client';
 
-export const STUDIO_LIST_QUERY = gql`
+export interface StudioItem {
+  id: string;
+  name: string;
+  favourites: number;
+  coverImageUrl: string | null;
+}
+
+export const STUDIO_LIST_QUERY: TypedDocumentNode<
+  { studioList: { hasNextPage: boolean; items: StudioItem[] } },
+  { page?: number; perPage?: number }
+> = gql`
   query StudioList($page: Int, $perPage: Int) {
     studioList(page: $page, perPage: $perPage) {
       hasNextPage

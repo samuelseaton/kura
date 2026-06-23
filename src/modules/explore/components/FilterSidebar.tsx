@@ -28,7 +28,7 @@ export function FilterSidebar({
   onFilterChange,
   onReset,
 }: FilterSidebarProps) {
-  const { data } = useQuery<{ genres: string[] }>(GENRES_QUERY);
+  const { data } = useQuery(GENRES_QUERY);
   const [search, setSearch] = useState(filter.search);
   const debouncedSearch = useDebounce(search, 400);
 

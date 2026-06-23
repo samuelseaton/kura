@@ -8,26 +8,13 @@ import { STUDIO_LIST_QUERY } from '@/modules/studios/queries/studioList.gql';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
-interface StudioItem {
-  id: string;
-  name: string;
-  favourites: number;
-  coverImageUrl: string | null;
-}
-
-interface StudioListData {
-  studioList: {
-    hasNextPage: boolean;
-    items: StudioItem[];
-  };
-}
+import type { StudioItem } from '@/modules/studios/queries/studioList.gql';
 
 export default function StudiosPage() {
   const [page, setPage] = useState(1);
   const [allStudios, setAllStudios] = useState<StudioItem[]>([]);
 
-  const { data, loading, error, fetchMore } = useQuery<StudioListData>(
-    STUDIO_LIST_QUERY,
+  const { data, loading, error, fetchMore } = useQuery(STUDIO_LIST_QUERY,
     {
       variables: { page: 1, perPage: 30 },
     }
@@ -45,7 +32,7 @@ export default function StudiosPage() {
     const result = await fetchMore({
       variables: { page: nextPage, perPage: 30 },
     });
-    const newStudios = (result.data as StudioListData)?.studioList?.items ?? [];
+    const newStudios = result.data?.studioList?.items ?? [];
     setAllStudios(prev => [...prev, ...newStudios]);
     setPage(nextPage);
   };

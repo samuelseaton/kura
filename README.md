@@ -83,6 +83,14 @@ NEXT_PUBLIC_NEON_AUTH_BASE_URL="https://....neonauth.....aws.neon.tech/.../auth"
 NEON_AUTH_COOKIE_SECRET="<32+ char secret — generate with: openssl rand -base64 32>"
 ```
 
+Then create a `.env.local` file (gitignored, takes precedence over `.env` in local dev):
+
+```
+NEXT_PUBLIC_NEON_AUTH_BASE_URL="http://localhost:3000"
+```
+
+This routes auth requests through the local `/api/auth/*` proxy so session cookies are set on `localhost` instead of the remote Neon domain. Without it, the browser will never send auth cookies to the dev server and all authenticated operations will fail. After setting this up for the first time, sign out and back in to get a fresh cookie on `localhost`.
+
 ### 3. Generate GraphQL types
 
 ```bash

@@ -5,7 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthenticate } from '@neondatabase/auth-ui';
 import { ME_QUERY } from '@/modules/vault/queries/vault.gql';
+import type { LibraryEntry } from '@/modules/vault/queries/vault.gql';
 import { MEDIA_BY_IDS_QUERY } from '@/modules/explore/queries/animeList.gql';
+import type { AnimeItem } from '@/modules/explore/queries/animeList.gql';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -28,43 +30,19 @@ const STATUS_ORDER = [
   'DROPPED',
 ];
 
-interface LibraryEntry {
-  id: string;
-  anilistId: number;
-  status: string;
-  personalRating: number | null;
-  isFavorite: boolean;
-  notes: string | null;
-  updatedAt: string;
-}
-
-interface MediaItem {
-  id: string;
-  title: string;
-  posterUrl: string;
-  rating: number | null;
-  episodeCount: number | null;
-  genres: string[];
-  studio: { id: string; name: string } | null;
-}
+type MediaItem = AnimeItem;
 
 export default function VaultPage() {
   const { user, isPending } = useAuthenticate();
 
-  const { data: meData, loading: meLoading } = useQuery<{
-    me: {
-      id: string;
-      name: string | null;
-      libraryEntries: LibraryEntry[];
-    } | null;
-  }>(ME_QUERY, { skip: !user });
+  const { data: meData, loading: meLoading } = useQuery(ME_QUERY, {
+    skip: !user,
+  });
 
   const anilistIds =
     meData?.me?.libraryEntries.map(e => String(e.anilistId)) ?? [];
 
-  const { data: mediaData, loading: mediaLoading } = useQuery<{
-    mediaByIds: MediaItem[];
-  }>(MEDIA_BY_IDS_QUERY, {
+  const { data: mediaData, loading: mediaLoading } = useQuery(MEDIA_BY_IDS_QUERY, {
     variables: { ids: anilistIds },
     skip: anilistIds.length === 0,
   });
