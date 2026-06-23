@@ -60,6 +60,12 @@ export const MEDIA_DETAIL_QUERY = gql`
   }
 `;
 
+export const GENRES_QUERY = gql`
+  query Genres {
+    genres
+  }
+`;
+
 export const MEDIA_BY_IDS_QUERY = gql`
   query MediaByIds($ids: [ID!]!) {
     mediaByIds(ids: $ids) {

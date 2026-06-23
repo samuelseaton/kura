@@ -84,9 +84,10 @@ export const STUDIO_DETAIL_QUERY = `
       id
       name
       siteUrl
-      media(sort: SCORE_DESC, perPage: 25) {
+      media(sort: SCORE_DESC, perPage: 50) {
         nodes {
           id
+          type
           title { romaji english }
           coverImage { extraLarge }
           averageScore
@@ -98,7 +99,7 @@ export const STUDIO_DETAIL_QUERY = `
   }
 `;
 
-export const GENRES_QUERY = `
+export const GENRE_COLLECTION_QUERY = `
   query {
     GenreCollection
   }

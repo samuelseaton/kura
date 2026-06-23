@@ -1,21 +1,14 @@
 "use client";
 
 import { useQuery } from "@apollo/client/react";
-import { gql } from "graphql-tag";
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { MediaFilter, MediaSort } from "../hooks/useAnimeFilter";
 import { useDebounce } from "../hooks/useDebounce";
 import { useState, useEffect } from "react";
-
-const GENRES_QUERY = gql`
-  query Genres {
-    genres
-  }
-`;
+import { GENRES_QUERY } from "../queries/animeList.gql";
 
 const SORT_OPTIONS: { value: MediaSort; label: string }[] = [
   { value: "SCORE_DESC", label: "Top Rated" },
@@ -93,7 +86,7 @@ export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebar
           Genres
         </p>
         <div className="flex flex-wrap gap-1.5">
-          {(data?.genres ?? []).map((genre) => {
+          {(data?.genres ?? []).filter((g) => g !== "Hentai").map((genre) => {
             const active = filter.genres.includes(genre);
             return (
               <button

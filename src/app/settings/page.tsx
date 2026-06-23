@@ -5,18 +5,12 @@ import { useQuery, useMutation } from "@apollo/client/react";
 import Link from "next/link";
 import { useAuthenticate } from "@neondatabase/auth-ui";
 import { ME_QUERY, UPDATE_SETTINGS } from "@/modules/vault/queries/vault.gql";
+import { GENRES_QUERY } from "@/modules/explore/queries/animeList.gql";
 import { Input } from "@/components/ui/input";
 import { buttonVariants } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { gql } from "graphql-tag";
 import { cn } from "@/lib/utils";
 import { Check, Settings } from "lucide-react";
-
-const GENRES_QUERY = gql`
-  query GenresForSettings {
-    genres
-  }
-`;
 
 const SORT_OPTIONS = [
   { value: "SCORE_DESC", label: "Top Rated" },

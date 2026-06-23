@@ -5,7 +5,7 @@ import {
   MEDIA_LIST_QUERY,
   MEDIA_DETAIL_QUERY,
   STUDIO_DETAIL_QUERY,
-  GENRES_QUERY,
+  GENRE_COLLECTION_QUERY,
   STUDIO_LIST_QUERY,
   MEDIA_BY_IDS_QUERY,
 } from "@/lib/anilist";
@@ -39,6 +39,7 @@ function normalizeMedia(m: AniListMedia) {
 
 interface AniListMedia {
   id: number;
+  type?: string | null;
   title: { romaji?: string | null; english?: string | null; native?: string | null };
   description?: string | null;
   coverImage?: { extraLarge?: string; large?: string } | null;
@@ -107,7 +108,7 @@ export const anilistResolvers = {
 
     genres: async () => {
       const data = await anilistFetch<{ GenreCollection: string[] }>(
-        GENRES_QUERY,
+        GENRE_COLLECTION_QUERY,
         {},
         86400
       );
@@ -164,7 +165,9 @@ export const anilistResolvers = {
         id: String(s.id),
         name: s.name,
         siteUrl: s.siteUrl ?? null,
-        series: s.media.nodes.map(normalizeMedia),
+        series: Array.from(
+          new Map(s.media.nodes.map((n) => [n.id, n])).values()
+        ).filter((n) => n.type === "ANIME").map(normalizeMedia),
       };
     },
   },
