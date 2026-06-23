@@ -1,80 +1,31 @@
-"use client";
-
-import { use } from "react";
-import { useQuery } from "@apollo/client/react";
+import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
 import { AnimeCard } from "@/modules/explore/components/AnimeCard";
 import { LibraryButton } from "@/modules/vault/components/LibraryButton";
-import { MEDIA_DETAIL_QUERY } from "@/modules/explore/queries/animeList.gql";
 import { Star, Tv, Calendar } from "lucide-react";
+import { getAnimeDetail, getTopAnimeIds } from "@/lib/anilist";
 
-interface MediaDetail {
-  media: {
-    id: string;
-    title: string;
-    synopsis: string | null;
-    posterUrl: string;
-    bannerUrl: string | null;
-    rating: number | null;
-    episodeCount: number | null;
-    status: string | null;
-    airDate: string | null;
-    genres: string[];
-    studio: { id: string; name: string } | null;
-    characters: { id: string; name: string; imageUrl: string | null }[];
-    recommendations: {
-      id: string;
-      title: string;
-      posterUrl: string;
-      rating: number | null;
-      genres: string[];
-      studio: { id: string; name: string } | null;
-    }[];
-  } | null;
+export const revalidate = 86400;
+
+export async function generateStaticParams() {
+  const ids = await getTopAnimeIds(50);
+  return ids.map((id) => ({ id }));
 }
 
-export default function AnimeDetailPage({
+export default async function AnimeDetailPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const { id } = use(params);
-  const { data, loading } = useQuery<MediaDetail>(MEDIA_DETAIL_QUERY, {
-    variables: { id },
-  });
+  const { id } = await params;
+  const anime = await getAnimeDetail(id);
 
-  const anime = data?.media;
-
-  if (loading) {
-    return (
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <Skeleton className="mb-4 h-56 w-full rounded-xl" />
-        <div className="flex gap-6">
-          <Skeleton className="h-64 w-44 shrink-0 rounded-xl" />
-          <div className="flex-1 space-y-3">
-            <Skeleton className="h-8 w-2/3" />
-            <Skeleton className="h-4 w-1/3" />
-            <Skeleton className="h-24 w-full" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!anime) {
-    return (
-      <div className="flex min-h-[60vh] items-center justify-center">
-        <p className="text-muted-foreground">Anime not found.</p>
-      </div>
-    );
-  }
+  if (!anime) notFound();
 
   return (
     <div className="mx-auto max-w-5xl px-4 pb-16 sm:px-6">
-      {/* Banner */}
       {anime.bannerUrl && (
         <div className="relative -mx-4 mb-6 h-48 overflow-hidden sm:-mx-6 md:mx-0 md:rounded-xl">
           <Image
@@ -88,7 +39,6 @@ export default function AnimeDetailPage({
         </div>
       )}
 
-      {/* Header */}
       <div className="flex gap-6">
         <div className="relative h-64 w-44 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted shadow-xl">
           <Image
@@ -144,7 +94,6 @@ export default function AnimeDetailPage({
         </div>
       </div>
 
-      {/* Synopsis */}
       {anime.synopsis && (
         <section className="mt-8">
           <h2 className="mb-2 text-lg font-semibold">Synopsis</h2>
@@ -152,7 +101,6 @@ export default function AnimeDetailPage({
         </section>
       )}
 
-      {/* Characters */}
       {anime.characters.length > 0 && (
         <section className="mt-8">
           <h2 className="mb-4 text-lg font-semibold">Main Characters</h2>
@@ -170,14 +118,13 @@ export default function AnimeDetailPage({
                     />
                   )}
                 </div>
-                <p className="text-xs font-medium leading-tight line-clamp-2">{c.name}</p>
+                <p className="line-clamp-2 text-xs font-medium leading-tight">{c.name}</p>
               </div>
             ))}
           </div>
         </section>
       )}
 
-      {/* Recommendations */}
       {anime.recommendations.length > 0 && (
         <section className="mt-8">
           <h2 className="mb-4 text-lg font-semibold">You Might Also Like</h2>

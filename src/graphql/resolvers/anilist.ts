@@ -1,7 +1,7 @@
 import {
   anilistFetch,
-  buildTitle,
-  stripHtml,
+  normalizeMedia,
+  AniListMedia,
   MEDIA_LIST_QUERY,
   MEDIA_DETAIL_QUERY,
   STUDIO_DETAIL_QUERY,
@@ -18,40 +18,6 @@ interface MediaFilter {
   sort?: AniListSort;
   page?: number;
   perPage?: number;
-}
-
-function normalizeMedia(m: AniListMedia) {
-  const mainStudio = m.studios?.nodes?.[0] ?? null;
-  return {
-    id: String(m.id),
-    title: buildTitle(m.title),
-    synopsis: m.description ? stripHtml(m.description) : null,
-    posterUrl: m.coverImage?.extraLarge ?? m.coverImage?.large ?? "",
-    bannerUrl: m.bannerImage ?? null,
-    rating: m.averageScore ? m.averageScore / 10 : null,
-    episodeCount: m.episodes ?? null,
-    status: m.status ?? null,
-    airDate: m.startDate?.year ? `${m.startDate.year}-${String(m.startDate.month ?? 1).padStart(2, "0")}-${String(m.startDate.day ?? 1).padStart(2, "0")}` : null,
-    genres: m.genres ?? [],
-    studio: mainStudio ? { id: String(mainStudio.id), name: mainStudio.name } : null,
-  };
-}
-
-interface AniListMedia {
-  id: number;
-  type?: string | null;
-  title: { romaji?: string | null; english?: string | null; native?: string | null };
-  description?: string | null;
-  coverImage?: { extraLarge?: string; large?: string } | null;
-  bannerImage?: string | null;
-  averageScore?: number | null;
-  episodes?: number | null;
-  status?: string | null;
-  startDate?: { year?: number | null; month?: number | null; day?: number | null } | null;
-  genres?: string[];
-  studios?: { nodes?: { id: number; name: string }[] } | null;
-  characters?: { nodes?: { id: number; name: { full: string }; image?: { medium?: string } }[] } | null;
-  recommendations?: { nodes?: { mediaRecommendation?: AniListMedia | null }[] } | null;
 }
 
 export const anilistResolvers = {
