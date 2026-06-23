@@ -28,12 +28,12 @@ function RemoveEntryButton({ anilistId }: { anilistId: number }) {
         onClick={() => setOpen(true)}
         disabled={loading}
         className={cn(
-          buttonVariants({ variant: 'ghost', size: 'sm' }),
-          'shrink-0 gap-1.5 text-muted-foreground hover:text-destructive disabled:opacity-50'
+          buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
+          'shrink-0 sm:w-auto sm:px-2.5 sm:gap-1.5 text-muted-foreground hover:text-destructive disabled:opacity-50'
         )}
       >
         {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-        Remove
+        <span className="hidden sm:inline">Remove</span>
       </button>
 
       <Dialog open={open} onOpenChange={setOpen}>
@@ -275,7 +275,7 @@ export default function VaultPage() {
                             {mediaLoading && !media ? (
                               <Skeleton className="h-4 w-2/3" />
                             ) : (
-                              <p className="line-clamp-1 font-medium leading-tight">
+                              <p className="line-clamp-2 font-medium leading-tight">
                                 {media?.title ?? `#${entry.anilistId}`}
                               </p>
                             )}
