@@ -207,7 +207,9 @@ export default function VaultPage() {
                 </h2>
 
                 <div className="space-y-3">
-                  {statusEntries.map(entry => {
+                  {[...statusEntries]
+                  .sort((a, b) => (mediaMap.get(a.anilistId)?.title ?? '').localeCompare(mediaMap.get(b.anilistId)?.title ?? ''))
+                  .map(entry => {
                     const media = mediaMap.get(entry.anilistId);
                     return (
                       <div
