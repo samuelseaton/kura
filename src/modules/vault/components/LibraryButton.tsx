@@ -25,7 +25,7 @@ interface LibraryButtonProps {
 export function LibraryButton({ anilistId }: LibraryButtonProps) {
   const [open, setOpen] = useState(false);
 
-  const { user } = useAuthenticate();
+  const { user } = useAuthenticate({ enabled: false });
 
   const { data: meData } = useQuery<{
     me: { libraryEntries: { anilistId: number; status: string; personalRating: number | null }[] } | null;

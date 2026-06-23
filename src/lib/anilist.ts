@@ -84,7 +84,7 @@ export const STUDIO_DETAIL_QUERY = `
       id
       name
       siteUrl
-      media(sort: SCORE_DESC, type: ANIME, isMain: true, perPage: 25) {
+      media(sort: SCORE_DESC, perPage: 25) {
         nodes {
           id
           title { romaji english }
@@ -108,11 +108,11 @@ export const STUDIO_LIST_QUERY = `
   query ($page: Int, $perPage: Int) {
     Page(page: $page, perPage: $perPage) {
       pageInfo { hasNextPage }
-      studios(sort: FAVOURITES_DESC, isAnimationStudio: true) {
+      studios(sort: FAVOURITES_DESC) {
         id
         name
         favourites
-        media(sort: SCORE_DESC, type: ANIME, isMain: true, perPage: 1) {
+        media(sort: SCORE_DESC, perPage: 1) {
           nodes { coverImage { large } }
         }
       }

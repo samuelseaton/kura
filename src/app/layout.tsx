@@ -1,24 +1,19 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Outfit } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/nav/Navbar";
 import { ApolloProvider } from "@/components/providers/ApolloProvider";
 import { AuthProvider } from "@/components/providers/AuthProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const outfit = Outfit({
+  variable: "--font-sans",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "AniGraph — Explore Anime by Studio & Genre",
+  title: "Kura — Your Personal Anime Library",
   description:
-    "An interactive anime discovery platform exploring studio relationships and genre connections.",
+    "Browse thousands of anime, track what you've watched, and build your personal collection.",
 };
 
 export default function RootLayout({
@@ -29,9 +24,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} dark h-full antialiased`}
+      className={`${outfit.variable} dark h-full antialiased`}
+      suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="flex min-h-full flex-col bg-background text-foreground" suppressHydrationWarning>
         <AuthProvider>
           <ApolloProvider>
             <Navbar />

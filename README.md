@@ -1,4 +1,4 @@
-# AniGraph
+# Kura
 
 An interactive anime discovery platform for exploring anime by studio, genre, and personal taste. Live data is proxied from the AniList GraphQL API; user libraries, collections, and settings are stored in a Neon PostgreSQL database.
 
