@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { buttonVariants } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
-import { Check, Settings } from 'lucide-react';
+import { Check, Settings, RotateCcw } from 'lucide-react';
 
 const SORT_OPTIONS = [
   { value: 'SCORE_DESC', label: 'Top Rated' },
@@ -55,6 +55,11 @@ export default function SettingsPage() {
     await updateSettings({ variables: { name, preferredGenres, defaultSort } });
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
+  };
+
+  const handleReset = () => {
+    setPreferredGenres([]);
+    setDefaultSort('SCORE_DESC');
   };
 
   if (isPending || meLoading) {
@@ -164,7 +169,15 @@ export default function SettingsPage() {
           </div>
         </section>
 
-        <div className="flex justify-end">
+        <div className="flex items-center justify-between">
+          <button
+            onClick={handleReset}
+            disabled={saving}
+            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'gap-2 text-muted-foreground')}
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            Reset to defaults
+          </button>
           <button
             onClick={handleSave}
             disabled={saving}

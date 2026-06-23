@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback, useTransition, useEffect } from 'react';
+import { useState, useCallback, useTransition, useEffect, useRef } from 'react';
 import { useQuery } from '@apollo/client/react';
 import { MEDIA_LIST_QUERY } from '../queries/animeList.gql';
 import type { AnimeItem } from '../queries/animeList.gql';
@@ -23,8 +23,20 @@ const DEFAULT_FILTER: MediaFilter = {
   sort: 'SCORE_DESC',
 };
 
-export function useAnimeFilter() {
+export function useAnimeFilter(initialSort?: MediaSort, initialGenres?: string[]) {
   const [filter, setFilter] = useState<MediaFilter>(DEFAULT_FILTER);
+  const prefsInitialized = useRef(false);
+
+  useEffect(() => {
+    if ((initialSort || initialGenres) && !prefsInitialized.current) {
+      prefsInitialized.current = true;
+      setFilter(prev => ({
+        ...prev,
+        ...(initialSort ? { sort: initialSort } : {}),
+        ...(initialGenres?.length ? { genres: initialGenres } : {}),
+      }));
+    }
+  }, [initialSort, initialGenres]);
   const [page, setPage] = useState(1);
   const [accItems, setAccItems] = useState<AnimeItem[]>([]);
   const [isPending, startTransition] = useTransition();

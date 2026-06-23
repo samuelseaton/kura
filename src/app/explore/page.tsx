@@ -1,15 +1,23 @@
 'use client';
 
+import { useQuery } from '@apollo/client/react';
+import { useAuthenticate } from '@neondatabase/auth-ui';
 import { AnimeCard } from '@/modules/explore/components/AnimeCard';
 import { AnimeCardSkeleton } from '@/modules/explore/components/AnimeCardSkeleton';
 import { FilterSidebar } from '@/modules/explore/components/FilterSidebar';
-import { useAnimeFilter } from '@/modules/explore/hooks/useAnimeFilter';
+import { useAnimeFilter, type MediaSort } from '@/modules/explore/hooks/useAnimeFilter';
+import { ME_QUERY } from '@/modules/vault/queries/vault.gql';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SlidersHorizontal } from 'lucide-react';
 import { useState } from 'react';
 
 export default function ExplorePage() {
+  const { user } = useAuthenticate({ enabled: false });
+  const { data: meData } = useQuery(ME_QUERY, { skip: !user });
+  const defaultSort = meData?.me?.settings?.defaultSort as MediaSort | undefined;
+  const preferredGenres = meData?.me?.settings?.preferredGenres;
+
   const {
     filter,
     updateFilter,
@@ -18,7 +26,7 @@ export default function ExplorePage() {
     items,
     hasNextPage,
     loading,
-  } = useAnimeFilter();
+  } = useAnimeFilter(defaultSort, preferredGenres);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
