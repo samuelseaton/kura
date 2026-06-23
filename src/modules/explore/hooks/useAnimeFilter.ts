@@ -12,8 +12,8 @@ export type MediaSort =
   | 'START_DATE_DESC';
 
 export interface MediaFilter {
-  search: string;
   genres: string[];
+  search: string;
   sort: MediaSort;
 }
 

@@ -4,28 +4,19 @@ import type { TypedDocumentNode } from '@apollo/client';
 export interface LibraryEntry {
   id: string;
   anilistId: number;
-  status: string;
-  personalRating: number | null;
+  createdAt: string;
   isFavorite: boolean;
   notes: string | null;
-  createdAt: string;
+  personalRating: number | null;
+  status: string;
   updatedAt: string;
 }
 
 export interface MeData {
   me: {
     id: string;
-    email: string;
-    name: string | null;
-    settings: {
-      preferredGenres: string[];
-      defaultSort: string;
-      layoutPreference: string;
-    } | null;
-    libraryEntries: LibraryEntry[];
     collections: {
       id: string;
-      name: string;
       createdAt: string;
       items: {
         id: string;
@@ -36,7 +27,16 @@ export interface MeData {
           status: string;
         };
       }[];
+      name: string;
     }[];
+    email: string;
+    libraryEntries: LibraryEntry[];
+    name: string | null;
+    settings: {
+      defaultSort: string;
+      layoutPreference: string;
+      preferredGenres: string[];
+    } | null;
   } | null;
 }
 
@@ -44,26 +44,8 @@ export const ME_QUERY: TypedDocumentNode<MeData, Record<string, never>> = gql`
   query Me {
     me {
       id
-      email
-      name
-      settings {
-        preferredGenres
-        defaultSort
-        layoutPreference
-      }
-      libraryEntries {
+i      collections {
         id
-        anilistId
-        status
-        personalRating
-        isFavorite
-        notes
-        createdAt
-        updatedAt
-      }
-      collections {
-        id
-        name
         createdAt
         items {
           id
@@ -74,6 +56,24 @@ export const ME_QUERY: TypedDocumentNode<MeData, Record<string, never>> = gql`
             status
           }
         }
+        name
+      }
+      email
+      libraryEntries {
+        id
+        anilistId
+        createdAt
+        isFavorite
+        notes
+        personalRating
+        status
+        updatedAt
+      }
+      name
+      settings {
+        defaultSort
+        layoutPreference
+        preferredGenres
       }
     }
   }
@@ -84,41 +84,41 @@ export const UPSERT_LIBRARY_ENTRY: TypedDocumentNode<
     upsertLibraryEntry: {
       id: string;
       anilistId: number;
-      status: string;
-      personalRating: number | null;
       isFavorite: boolean;
       notes: string | null;
+      personalRating: number | null;
+      status: string;
       updatedAt: string;
     };
   },
   {
     anilistId: number;
-    status: string;
-    personalRating?: number;
     isFavorite?: boolean;
     notes?: string;
+    personalRating?: number;
+    status: string;
   }
 > = gql`
   mutation UpsertLibraryEntry(
     $anilistId: Int!
-    $status: WatchStatus!
-    $personalRating: Float
     $isFavorite: Boolean
     $notes: String
+    $personalRating: Float
+    $status: WatchStatus!
   ) {
     upsertLibraryEntry(
       anilistId: $anilistId
-      status: $status
-      personalRating: $personalRating
       isFavorite: $isFavorite
       notes: $notes
+      personalRating: $personalRating
+      status: $status
     ) {
       id
       anilistId
-      status
-      personalRating
       isFavorite
       notes
+      personalRating
+      status
       updatedAt
     }
   }
@@ -137,9 +137,9 @@ export const CREATE_COLLECTION: TypedDocumentNode<
   {
     createCollection: {
       id: string;
-      name: string;
       createdAt: string;
       items: { id: string }[];
+      name: string;
     };
   },
   { name: string }
@@ -147,11 +147,11 @@ export const CREATE_COLLECTION: TypedDocumentNode<
   mutation CreateCollection($name: String!) {
     createCollection(name: $name) {
       id
-      name
       createdAt
       items {
         id
       }
+      name
     }
   }
 `;
@@ -162,37 +162,37 @@ export const UPDATE_SETTINGS: TypedDocumentNode<
       id: string;
       name: string | null;
       settings: {
-        preferredGenres: string[];
         defaultSort: string;
         layoutPreference: string;
+        preferredGenres: string[];
       } | null;
     };
   },
   {
-    name?: string;
-    preferredGenres?: string[];
     defaultSort?: string;
     layoutPreference?: string;
+    name?: string;
+    preferredGenres?: string[];
   }
 > = gql`
   mutation UpdateSettings(
-    $name: String
-    $preferredGenres: [String!]
     $defaultSort: String
     $layoutPreference: String
+    $name: String
+    $preferredGenres: [String!]
   ) {
     updateSettings(
-      name: $name
-      preferredGenres: $preferredGenres
       defaultSort: $defaultSort
       layoutPreference: $layoutPreference
+      name: $name
+      preferredGenres: $preferredGenres
     ) {
       id
       name
       settings {
-        preferredGenres
         defaultSort
         layoutPreference
+        preferredGenres
       }
     }
   }

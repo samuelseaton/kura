@@ -18,20 +18,20 @@ const SORT_OPTIONS: { value: MediaSort; label: string }[] = [
 
 interface FilterSidebarProps {
   filter: MediaFilter;
+  hideSearch?: boolean;
+  search: string;
   onFilterChange: (patch: Partial<MediaFilter>) => void;
   onReset: () => void;
-  search: string;
   onSearchChange: (value: string) => void;
-  hideSearch?: boolean;
 }
 
 export function FilterSidebar({
   filter,
+  hideSearch,
+  search,
   onFilterChange,
   onReset,
-  search,
   onSearchChange,
-  hideSearch,
 }: FilterSidebarProps) {
   const { data } = useQuery(GENRES_QUERY);
 

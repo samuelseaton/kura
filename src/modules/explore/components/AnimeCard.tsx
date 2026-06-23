@@ -6,22 +6,22 @@ import { Star } from 'lucide-react';
 
 interface AnimeCardProps {
   id: string;
-  title: string;
+  episodeCount: number | null;
+  genres: string[];
   posterUrl: string;
   rating: number | null;
-  episodeCount: number | null;
   studio: { id: string; name: string } | null;
-  genres: string[];
+  title: string;
 }
 
 export const AnimeCard = memo(function AnimeCard({
   id,
-  title,
+  episodeCount,
+  genres,
   posterUrl,
   rating,
-  episodeCount,
   studio,
-  genres,
+  title,
 }: AnimeCardProps) {
   return (
     <Link href={`/explore/${id}`} className="group block">

@@ -4,16 +4,16 @@ import { Users } from 'lucide-react';
 
 interface StudioCardProps {
   id: string;
-  name: string;
-  favourites: number;
   coverImageUrl: string | null;
+  favourites: number;
+  name: string;
 }
 
 export function StudioCard({
   id,
-  name,
-  favourites,
   coverImageUrl,
+  favourites,
+  name,
 }: StudioCardProps) {
   return (
     <Link href={`/studios/${id}`} className="group block">

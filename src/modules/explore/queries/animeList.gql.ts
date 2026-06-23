@@ -3,52 +3,52 @@ import type { TypedDocumentNode } from '@apollo/client';
 
 export interface AnimeItem {
   id: string;
-  title: string;
+  episodeCount: number | null;
+  genres: string[];
   posterUrl: string;
   rating: number | null;
-  episodeCount: number | null;
   status: string | null;
-  genres: string[];
   studio: { id: string; name: string } | null;
+  title: string;
 }
 
 interface MediaFilter {
-  search?: string;
   genres?: string[];
-  sort?: string;
   page?: number;
   perPage?: number;
+  search?: string;
+  sort?: string;
 }
 
 export const MEDIA_LIST_QUERY: TypedDocumentNode<
   {
     mediaList: {
-      total: number;
-      hasNextPage: boolean;
       currentPage: number;
+      hasNextPage: boolean;
       items: AnimeItem[];
+      total: number;
     };
   },
   { filter?: MediaFilter }
 > = gql`
   query MediaList($filter: MediaFilter) {
     mediaList(filter: $filter) {
-      total
-      hasNextPage
       currentPage
+      hasNextPage
       items {
         id
-        title
+        episodeCount
+        genres
         posterUrl
         rating
-        episodeCount
         status
-        genres
         studio {
           id
           name
         }
+        title
       }
+      total
     }
   }
 `;
@@ -57,35 +57,35 @@ export const MEDIA_DETAIL_QUERY = gql`
   query MediaDetail($id: ID!) {
     media(id: $id) {
       id
-      title
-      synopsis
-      posterUrl
-      bannerUrl
-      rating
-      episodeCount
-      status
       airDate
-      genres
-      studio {
-        id
-        name
-      }
+      bannerUrl
       characters {
         id
-        name
         imageUrl
+        name
       }
+      episodeCount
+      genres
+      posterUrl
+      rating
       recommendations {
         id
-        title
+        genres
         posterUrl
         rating
-        genres
         studio {
           id
           name
         }
+        title
       }
+      status
+      studio {
+        id
+        name
+      }
+      synopsis
+      title
     }
   }
 `;
@@ -106,15 +106,15 @@ export const MEDIA_BY_IDS_QUERY: TypedDocumentNode<
   query MediaByIds($ids: [ID!]!) {
     mediaByIds(ids: $ids) {
       id
-      title
-      posterUrl
-      rating
       episodeCount
       genres
+      posterUrl
+      rating
       studio {
         id
         name
       }
+      title
     }
   }
 `;

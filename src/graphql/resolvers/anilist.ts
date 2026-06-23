@@ -17,11 +17,11 @@ type AniListSort =
   | 'START_DATE_DESC';
 
 interface MediaFilter {
-  search?: string;
   genres?: string[];
-  sort?: AniListSort;
   page?: number;
   perPage?: number;
+  search?: string;
+  sort?: AniListSort;
 }
 
 export const anilistResolvers = {

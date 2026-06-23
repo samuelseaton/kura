@@ -3,9 +3,9 @@ import type { TypedDocumentNode } from '@apollo/client';
 
 export interface StudioItem {
   id: string;
-  name: string;
-  favourites: number;
   coverImageUrl: string | null;
+  favourites: number;
+  name: string;
 }
 
 export const STUDIO_LIST_QUERY: TypedDocumentNode<
@@ -17,9 +17,9 @@ export const STUDIO_LIST_QUERY: TypedDocumentNode<
       hasNextPage
       items {
         id
-        name
-        favourites
         coverImageUrl
+        favourites
+        name
       }
     }
   }
@@ -30,19 +30,19 @@ export const STUDIO_DETAIL_QUERY = gql`
     studio(id: $id) {
       id
       name
-      siteUrl
       series {
         id
-        title
-        posterUrl
-        rating
         episodeCount
         genres
+        posterUrl
+        rating
         studio {
           id
           name
         }
+        title
       }
+      siteUrl
     }
   }
 `;

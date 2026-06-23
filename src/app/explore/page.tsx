@@ -22,12 +22,12 @@ export default function ExplorePage() {
 
   const {
     filter,
-    updateFilter,
-    resetFilter,
-    loadMore,
-    items,
     hasNextPage,
+    items,
     loading,
+    loadMore,
+    resetFilter,
+    updateFilter,
   } = useAnimeFilter(defaultSort, preferredGenres);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [search, setSearch] = useState('');

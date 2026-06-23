@@ -32,7 +32,7 @@ export async function anilistFetch<T>(
 export const MEDIA_LIST_QUERY = `
   query ($page: Int, $perPage: Int, $search: String, $genre_in: [String], $sort: [MediaSort]) {
     Page(page: $page, perPage: $perPage) {
-      pageInfo { total currentPage hasNextPage }
+      pageInfo { currentPage hasNextPage total }
       media(
         type: ANIME
         isAdult: false
@@ -42,15 +42,15 @@ export const MEDIA_LIST_QUERY = `
         sort: $sort
       ) {
         id
-        title { romaji english }
-        description(asHtml: false)
-        coverImage { extraLarge }
         averageScore
+        coverImage { extraLarge }
+        description(asHtml: false)
         episodes
-        status
-        startDate { year month day }
         genres
+        startDate { day month year }
+        status
         studios(isMain: true) { nodes { id name } }
+        title { english romaji }
       }
     }
   }
@@ -61,29 +61,29 @@ export const MEDIA_DETAIL_QUERY = `
   query ($id: Int) {
     Media(id: $id, type: ANIME) {
       id
-      title { romaji english native }
-      description(asHtml: false)
-      coverImage { extraLarge }
-      bannerImage
       averageScore
-      episodes
-      status
-      startDate { year month day }
-      genres
-      studios(isMain: true) { nodes { id name } }
+      bannerImage
       characters(sort: ROLE, role: MAIN, perPage: 6) {
-        nodes { id name { full } image { medium } }
+        nodes { id image { medium } name { full } }
       }
+      coverImage { extraLarge }
+      description(asHtml: false)
+      episodes
+      genres
       recommendations(sort: RATING_DESC, perPage: 6) {
         nodes {
           mediaRecommendation {
             id
-            title { romaji english }
-            coverImage { large }
             averageScore
+            coverImage { large }
+            title { english romaji }
           }
         }
       }
+      startDate { day month year }
+      status
+      studios(isMain: true) { nodes { id name } }
+      title { english native romaji }
     }
   }
 `;
@@ -93,19 +93,19 @@ export const STUDIO_DETAIL_QUERY = `
   query ($id: Int) {
     Studio(id: $id) {
       id
-      name
-      siteUrl
       media(sort: SCORE_DESC, perPage: 50) {
         nodes {
           id
-          type
-          title { romaji english }
-          coverImage { extraLarge }
           averageScore
+          coverImage { extraLarge }
           episodes
           genres
+          title { english romaji }
+          type
         }
       }
+      name
+      siteUrl
     }
   }
 `;
@@ -124,11 +124,11 @@ export const STUDIO_LIST_QUERY = `
       pageInfo { hasNextPage }
       studios(sort: FAVOURITES_DESC) {
         id
-        name
         favourites
         media(sort: SCORE_DESC, perPage: 1) {
           nodes { coverImage { large } }
         }
+        name
       }
     }
   }
@@ -140,14 +140,14 @@ export const MEDIA_BY_IDS_QUERY = `
     Page(perPage: 50) {
       media(id_in: $ids, type: ANIME) {
         id
-        title { romaji english }
-        coverImage { extraLarge }
         averageScore
+        coverImage { extraLarge }
         episodes
-        status
-        startDate { year month day }
         genres
+        startDate { day month year }
+        status
         studios(isMain: true) { nodes { id name } }
+        title { english romaji }
       }
     }
   }
@@ -157,35 +157,35 @@ export const MEDIA_BY_IDS_QUERY = `
 
 export interface AniListMedia {
   id: number;
-  type?: string | null;
-  title: {
-    romaji?: string | null;
-    english?: string | null;
-    native?: string | null;
-  };
-  description?: string | null;
-  coverImage?: { extraLarge?: string; large?: string } | null;
-  bannerImage?: string | null;
   averageScore?: number | null;
-  episodes?: number | null;
-  status?: string | null;
-  startDate?: {
-    year?: number | null;
-    month?: number | null;
-    day?: number | null;
-  } | null;
-  genres?: string[];
-  studios?: { nodes?: { id: number; name: string }[] } | null;
+  bannerImage?: string | null;
   characters?: {
     nodes?: {
       id: number;
-      name: { full: string };
       image?: { medium?: string };
+      name: { full: string };
     }[];
   } | null;
+  coverImage?: { extraLarge?: string; large?: string } | null;
+  description?: string | null;
+  episodes?: number | null;
+  genres?: string[];
   recommendations?: {
     nodes?: { mediaRecommendation?: AniListMedia | null }[];
   } | null;
+  startDate?: {
+    day?: number | null;
+    month?: number | null;
+    year?: number | null;
+  } | null;
+  status?: string | null;
+  studios?: { nodes?: { id: number; name: string }[] } | null;
+  title: {
+    english?: string | null;
+    native?: string | null;
+    romaji?: string | null;
+  };
+  type?: string | null;
 }
 
 /**
