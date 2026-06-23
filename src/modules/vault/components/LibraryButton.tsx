@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useAuthenticate } from '@neondatabase/auth-ui';
-import { BookMarked, Check, ChevronDown, Trash2 } from 'lucide-react';
+import { BookMarked, Check, ChevronDown, Loader2, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import {
@@ -39,13 +39,15 @@ export function LibraryButton({ anilistId }: LibraryButtonProps) {
 
   const { data: meData } = useQuery(ME_QUERY, { skip: !user });
 
-  const [upsert] = useMutation(UPSERT_LIBRARY_ENTRY, {
+  const [upsert, { loading: upserting }] = useMutation(UPSERT_LIBRARY_ENTRY, {
     refetchQueries: [{ query: ME_QUERY }],
   });
 
-  const [remove] = useMutation(REMOVE_LIBRARY_ENTRY, {
+  const [remove, { loading: removing }] = useMutation(REMOVE_LIBRARY_ENTRY, {
     refetchQueries: [{ query: ME_QUERY }],
   });
+
+  const isLoading = upserting || removing;
 
   if (!user) {
     return (
@@ -74,24 +76,22 @@ export function LibraryButton({ anilistId }: LibraryButtonProps) {
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(o => !o)}
+        onClick={() => !isLoading && setOpen(o => !o)}
+        disabled={isLoading}
         className={cn(
           buttonVariants({ variant: entry ? 'default' : 'outline' }),
-          'gap-2'
+          'gap-2 disabled:opacity-70'
         )}
       >
-        {entry ? (
-          <>
-            <Check className="h-4 w-4" />
-            {STATUS_LABELS[entry.status]}
-          </>
+        {isLoading ? (
+          <Loader2 className="h-4 w-4 animate-spin" />
+        ) : entry ? (
+          <Check className="h-4 w-4" />
         ) : (
-          <>
-            <BookMarked className="h-4 w-4" />
-            Add to Library
-          </>
+          <BookMarked className="h-4 w-4" />
         )}
-        <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+        {entry ? STATUS_LABELS[entry.status] : 'Add to Library'}
+        {!isLoading && <ChevronDown className="h-3.5 w-3.5 opacity-60" />}
       </button>
 
       {open && (
@@ -103,7 +103,7 @@ export function LibraryButton({ anilistId }: LibraryButtonProps) {
                 key={status}
                 onClick={() => handleSelect(status)}
                 className={cn(
-                  'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-white/8 active:bg-white/12',
+                  'flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors first:rounded-t-xl last:rounded-b-xl hover:bg-white/10 active:bg-white/15',
                   entry?.status === status && 'text-primary font-medium'
                 )}
               >
@@ -116,7 +116,7 @@ export function LibraryButton({ anilistId }: LibraryButtonProps) {
                 <div className="mx-3 border-t border-border" />
                 <button
                   onClick={handleRemove}
-                  className="flex w-full items-center gap-2 rounded-b-xl px-3 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
+                  className="flex w-full items-center gap-2 rounded-b-xl px-3 py-2 text-left text-sm text-destructive transition-colors hover:bg-white/10"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                   Remove

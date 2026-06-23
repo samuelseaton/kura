@@ -1,18 +1,42 @@
 'use client';
 
-import { useQuery } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuthenticate } from '@neondatabase/auth-ui';
-import { ME_QUERY } from '@/modules/vault/queries/vault.gql';
+import { ME_QUERY, REMOVE_LIBRARY_ENTRY } from '@/modules/vault/queries/vault.gql';
 import type { LibraryEntry } from '@/modules/vault/queries/vault.gql';
 import { MEDIA_BY_IDS_QUERY } from '@/modules/explore/queries/animeList.gql';
 import type { AnimeItem } from '@/modules/explore/queries/animeList.gql';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Star, BookMarked } from 'lucide-react';
+import { Loader2, Star, BookMarked, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+function RemoveEntryButton({ anilistId }: { anilistId: number }) {
+  const [remove, { loading }] = useMutation(REMOVE_LIBRARY_ENTRY, {
+    refetchQueries: [{ query: ME_QUERY }],
+  });
+
+  return (
+    <button
+      onClick={() => remove({ variables: { anilistId } })}
+      disabled={loading}
+      className={cn(
+        buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
+        'shrink-0 text-muted-foreground hover:bg-white/10 disabled:opacity-50'
+      )}
+    >
+      {loading ? (
+        <Loader2 className="h-4 w-4 animate-spin" />
+      ) : (
+        <Trash2 className="h-4 w-4" />
+      )}
+      <span className="sr-only">Remove from library</span>
+    </button>
+  );
+}
 
 const STATUS_LABELS: Record<string, string> = {
   WATCHING: 'Watching',
@@ -129,63 +153,69 @@ export default function VaultPage() {
                   {statusEntries.map(entry => {
                     const media = mediaMap.get(entry.anilistId);
                     return (
-                      <Link
+                      <div
                         key={entry.id}
-                        href={`/explore/${entry.anilistId}`}
-                        className="flex items-center gap-4 rounded-xl border border-border/50 bg-card p-3 hover:border-primary/40 hover:bg-white/10"
+                        className="flex items-center gap-3 rounded-xl border border-border/50 bg-card p-3 transition-colors hover:border-primary/40 hover:bg-white/10"
                       >
-                        <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
-                          {media && (
-                            <Image
-                              src={media.posterUrl}
-                              alt={media.title}
-                              fill
-                              className="object-cover"
-                              unoptimized
-                            />
-                          )}
-                        </div>
-
-                        <div className="flex min-w-0 flex-1 flex-col gap-1">
-                          {mediaLoading && !media ? (
-                            <Skeleton className="h-4 w-2/3" />
-                          ) : (
-                            <p className="font-medium leading-tight line-clamp-1">
-                              {media?.title ?? `#${entry.anilistId}`}
-                            </p>
-                          )}
-                          {media?.studio && (
-                            <p className="text-xs text-muted-foreground">
-                              {media.studio.name}
-                            </p>
-                          )}
-                          <div className="flex flex-wrap gap-1">
-                            {media?.genres.slice(0, 3).map(g => (
-                              <Badge
-                                key={g}
-                                variant="secondary"
-                                className="px-1.5 py-0 text-[10px]"
-                              >
-                                {g}
-                              </Badge>
-                            ))}
+                        <Link
+                          href={`/explore/${entry.anilistId}`}
+                          className="flex min-w-0 flex-1 items-center gap-3 hover:opacity-80"
+                        >
+                          <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
+                            {media && (
+                              <Image
+                                src={media.posterUrl}
+                                alt={media.title}
+                                fill
+                                className="object-cover"
+                                unoptimized
+                              />
+                            )}
                           </div>
-                        </div>
 
-                        <div className="flex shrink-0 flex-col items-end gap-1">
-                          {entry.personalRating !== null && (
-                            <span className="flex items-center gap-1 text-xs text-yellow-400">
-                              <Star className="h-3 w-3 fill-yellow-400" />
-                              {entry.personalRating.toFixed(1)}
-                            </span>
-                          )}
-                          {media?.rating != null && (
-                            <span className="text-xs text-muted-foreground">
-                              AniList {media.rating.toFixed(1)}
-                            </span>
-                          )}
-                        </div>
-                      </Link>
+                          <div className="flex min-w-0 flex-1 flex-col gap-1">
+                            {mediaLoading && !media ? (
+                              <Skeleton className="h-4 w-2/3" />
+                            ) : (
+                              <p className="line-clamp-1 font-medium leading-tight">
+                                {media?.title ?? `#${entry.anilistId}`}
+                              </p>
+                            )}
+                            {media?.studio && (
+                              <p className="text-xs text-muted-foreground">
+                                {media.studio.name}
+                              </p>
+                            )}
+                            <div className="flex flex-wrap gap-1">
+                              {media?.genres.slice(0, 3).map(g => (
+                                <Badge
+                                  key={g}
+                                  variant="secondary"
+                                  className="px-1.5 py-0 text-[10px]"
+                                >
+                                  {g}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="flex shrink-0 flex-col items-end gap-1">
+                            {entry.personalRating !== null && (
+                              <span className="flex items-center gap-1 text-xs text-yellow-400">
+                                <Star className="h-3 w-3 fill-yellow-400" />
+                                {entry.personalRating.toFixed(1)}
+                              </span>
+                            )}
+                            {media?.rating != null && (
+                              <span className="text-xs text-muted-foreground">
+                                AniList {media.rating.toFixed(1)}
+                              </span>
+                            )}
+                          </div>
+                        </Link>
+
+                        <RemoveEntryButton anilistId={entry.anilistId} />
+                      </div>
                     );
                   })}
                 </div>

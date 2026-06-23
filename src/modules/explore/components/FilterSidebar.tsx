@@ -70,7 +70,7 @@ export function FilterSidebar({
                 'rounded-lg px-3 py-1.5 text-left text-sm transition-colors',
                 filter.sort === value
                   ? 'bg-primary/15 text-primary font-medium'
-                  : 'text-muted-foreground hover:bg-white/8 hover:text-foreground active:bg-white/12'
+                  : 'text-muted-foreground hover:bg-white/10 hover:text-foreground active:bg-white/15'
               )}
             >
               {label}

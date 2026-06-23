@@ -50,7 +50,7 @@ function MobileAuthFooter() {
           </SheetClose>
           <button
             onClick={handleSignOut}
-            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'justify-start text-destructive hover:text-destructive hover:bg-destructive/10 active:translate-y-0 active:bg-destructive/20 active:opacity-100')}
+            className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'justify-start text-destructive hover:bg-white/10 active:translate-y-0 active:bg-white/15 active:opacity-100')}
           >
             Sign out
           </button>
