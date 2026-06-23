@@ -34,9 +34,12 @@ export function NavbarAuth() {
   const router = useRouter();
 
   const handleSignOut = async () => {
-    await fetch('/api/auth/sign-out', { method: 'POST' });
-    router.push('/');
-    router.refresh();
+    await fetch('/api/auth/sign-out', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    });
+    window.location.href = '/';
   };
 
   return (
