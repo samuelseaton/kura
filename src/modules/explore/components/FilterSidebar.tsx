@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { MediaFilter, MediaSort } from '../hooks/useAnimeFilter';
-import { useDebounce } from '../hooks/useDebounce';
-import { useState, useEffect } from 'react';
+
 import { GENRES_QUERY } from '../queries/animeList.gql';
 
 const SORT_OPTIONS: { value: MediaSort; label: string }[] = [
@@ -21,22 +20,20 @@ interface FilterSidebarProps {
   filter: MediaFilter;
   onFilterChange: (patch: Partial<MediaFilter>) => void;
   onReset: () => void;
+  search: string;
+  onSearchChange: (value: string) => void;
+  hideSearch?: boolean;
 }
 
 export function FilterSidebar({
   filter,
   onFilterChange,
   onReset,
+  search,
+  onSearchChange,
+  hideSearch,
 }: FilterSidebarProps) {
   const { data } = useQuery(GENRES_QUERY);
-  const [search, setSearch] = useState(filter.search);
-  const debouncedSearch = useDebounce(search, 400);
-
-  useEffect(() => {
-    if (debouncedSearch !== filter.search) {
-      onFilterChange({ search: debouncedSearch });
-    }
-  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const toggleGenre = (genre: string) => {
     const next = filter.genres.includes(genre)
@@ -50,16 +47,18 @@ export function FilterSidebar({
 
   return (
     <aside className="flex flex-col gap-6">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Search anime..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="pl-8"
-        />
-      </div>
+      {/* Search – hidden on mobile since it lives in the page header there */}
+      {!hideSearch && (
+        <div className="relative">
+          <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Search anime..."
+            value={search}
+            onChange={e => onSearchChange(e.target.value)}
+            className="pl-8"
+          />
+        </div>
+      )}
 
       {/* Sort */}
       <div>
@@ -114,7 +113,7 @@ export function FilterSidebar({
       {hasActiveFilters && (
         <button
           onClick={() => {
-            setSearch('');
+            onSearchChange('');
             onReset();
           }}
           className={cn(

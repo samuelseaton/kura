@@ -7,10 +7,12 @@ import { AnimeCardSkeleton } from '@/modules/explore/components/AnimeCardSkeleto
 import { FilterSidebar } from '@/modules/explore/components/FilterSidebar';
 import { useAnimeFilter, type MediaSort } from '@/modules/explore/hooks/useAnimeFilter';
 import { ME_QUERY } from '@/modules/vault/queries/vault.gql';
+import { Input } from '@/components/ui/input';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { SlidersHorizontal } from 'lucide-react';
-import { useState } from 'react';
+import { SlidersHorizontal, Search } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useDebounce } from '@/modules/explore/hooks/useDebounce';
 
 export default function ExplorePage() {
   const { user } = useAuthenticate({ enabled: false });
@@ -28,10 +30,21 @@ export default function ExplorePage() {
     loading,
   } = useAnimeFilter(defaultSort, preferredGenres);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 400);
+
+  useEffect(() => {
+    updateFilter({ search: debouncedSearch });
+  }, [debouncedSearch]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleReset = () => {
+    setSearch('');
+    resetFilter();
+  };
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-4 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold">Explore Anime</h1>
           <p className="mt-1 text-sm text-muted-foreground">
@@ -50,7 +63,26 @@ export default function ExplorePage() {
         </button>
       </div>
 
+      {/* Mobile search bar – always visible, above the grid */}
+      <div className="relative mb-6 md:hidden">
+        <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search anime..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="pl-8"
+        />
+      </div>
+
       <div className="flex gap-8">
+        {/* Backdrop – outside sidebar so CSS transform doesn't constrain fixed positioning */}
+        {sidebarOpen && (
+          <div
+            className="fixed inset-0 z-30 bg-black/50 md:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar – desktop always visible, mobile slide-in overlay */}
         <div
           className={cn(
@@ -58,16 +90,13 @@ export default function ExplorePage() {
             sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
-          {sidebarOpen && (
-            <div
-              className="fixed inset-0 z-[-1] bg-black/50 md:hidden"
-              onClick={() => setSidebarOpen(false)}
-            />
-          )}
           <FilterSidebar
             filter={filter}
             onFilterChange={updateFilter}
-            onReset={resetFilter}
+            onReset={handleReset}
+            search={search}
+            onSearchChange={setSearch}
+            hideSearch
           />
         </div>
 
