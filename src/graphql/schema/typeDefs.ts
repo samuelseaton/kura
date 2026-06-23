@@ -132,9 +132,16 @@ export const typeDefs = gql`
     email: String!
     name: String
     avatarUrl: String
+    shareToken: String
     settings: UserSettings
     libraryEntries: [LibraryEntry!]!
     collections: [Collection!]!
+  }
+
+  type PublicLibrary {
+    ownerName: String
+    ownerAvatarUrl: String
+    libraryEntries: [LibraryEntry!]!
   }
 
   # ── Queries ────────────────────────────────────────────────────────────────
@@ -147,6 +154,7 @@ export const typeDefs = gql`
     studioList(page: Int, perPage: Int, search: String): StudioListResult!
     studio(id: ID!): StudioDetail
     me: User
+    publicLibrary(token: String!): PublicLibrary
   }
 
   # ── Mutations ──────────────────────────────────────────────────────────────
@@ -175,5 +183,8 @@ export const typeDefs = gql`
       defaultSort: String
       layoutPreference: String
     ): User!
+
+    generateShareToken: String!
+    revokeShareToken: Boolean!
   }
 `;

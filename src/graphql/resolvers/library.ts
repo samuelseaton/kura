@@ -1,4 +1,5 @@
 import { GraphQLError } from 'graphql';
+import { randomBytes } from 'crypto';
 import type { Context } from '@/graphql/context';
 
 const VALID_STATUSES = [
@@ -37,6 +38,23 @@ function serializeEntry(entry: {
 
 export const libraryResolvers = {
   Query: {
+    publicLibrary: async (
+      _: unknown,
+      { token }: { token: string },
+      { prisma }: Context
+    ) => {
+      const user = await prisma.user.findUnique({
+        where: { shareToken: token },
+        include: { libraryEntries: { orderBy: { updatedAt: 'desc' } } },
+      });
+      if (!user) return null;
+      return {
+        ownerName: user.name,
+        ownerAvatarUrl: user.avatarUrl,
+        libraryEntries: user.libraryEntries.map(serializeEntry),
+      };
+    },
+
     me: async (_: unknown, __: unknown, { prisma, userId }: Context) => {
       if (!userId) return null;
 
@@ -204,6 +222,27 @@ export const libraryResolvers = {
       await prisma.collectionItem.deleteMany({
         where: { collectionId, libraryEntryId },
       });
+      return true;
+    },
+
+    generateShareToken: async (
+      _: unknown,
+      __: unknown,
+      { prisma, userId }: Context
+    ) => {
+      const uid = requireAuth(userId);
+      const token = randomBytes(16).toString('hex');
+      await prisma.user.update({ where: { id: uid }, data: { shareToken: token } });
+      return token;
+    },
+
+    revokeShareToken: async (
+      _: unknown,
+      __: unknown,
+      { prisma, userId }: Context
+    ) => {
+      const uid = requireAuth(userId);
+      await prisma.user.update({ where: { id: uid }, data: { shareToken: null } });
       return true;
     },
 

@@ -3,15 +3,16 @@
 import { useMutation, useQuery } from '@apollo/client/react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useAuthenticate } from '@neondatabase/auth-ui';
-import { ME_QUERY, REMOVE_LIBRARY_ENTRY } from '@/modules/vault/queries/vault.gql';
+import { ME_QUERY, REMOVE_LIBRARY_ENTRY, GENERATE_SHARE_TOKEN, REVOKE_SHARE_TOKEN } from '@/modules/vault/queries/vault.gql';
 import type { LibraryEntry } from '@/modules/vault/queries/vault.gql';
 import { MEDIA_BY_IDS_QUERY } from '@/modules/explore/queries/animeList.gql';
 import type { AnimeItem } from '@/modules/explore/queries/animeList.gql';
 import { buttonVariants } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, Star, BookMarked, Trash2 } from 'lucide-react';
+import { Check, Loader2, Link2, Share2, Star, BookMarked, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function RemoveEntryButton({ anilistId }: { anilistId: number }) {
@@ -55,6 +56,59 @@ const STATUS_ORDER = [
 ];
 
 type MediaItem = AnimeItem;
+
+function SharePanel({ token }: { token: string | null }) {
+  const [copied, setCopied] = useState(false);
+
+  const [generate, { loading: generating }] = useMutation(GENERATE_SHARE_TOKEN, {
+    refetchQueries: [ME_QUERY],
+  });
+  const [revoke, { loading: revoking }] = useMutation(REVOKE_SHARE_TOKEN, {
+    refetchQueries: [ME_QUERY],
+  });
+
+  const shareUrl = token ? `${window.location.origin}/vault/${token}` : null;
+
+  const handleCopy = async () => {
+    if (!shareUrl) return;
+    await navigator.clipboard.writeText(shareUrl);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  if (!token) {
+    return (
+      <button
+        onClick={() => generate()}
+        disabled={generating}
+        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-2')}
+      >
+        <Share2 className="h-3.5 w-3.5" />
+        {generating ? 'Generating…' : 'Share'}
+      </button>
+    );
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <button
+        onClick={handleCopy}
+        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-2')}
+      >
+        {copied ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Link2 className="h-3.5 w-3.5" />}
+        {copied ? 'Copied!' : 'Copy link'}
+      </button>
+      <button
+        onClick={() => revoke()}
+        disabled={revoking}
+        title="Revoke share link"
+        className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-muted-foreground hover:text-destructive')}
+      >
+        <Trash2 className="h-3.5 w-3.5" />
+      </button>
+    </div>
+  );
+}
 
 export default function VaultPage() {
   const { user, isPending } = useAuthenticate();
@@ -116,11 +170,14 @@ export default function VaultPage() {
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-      <div className="mb-8">
-        <h1 className="text-2xl font-bold">My Vault</h1>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {entries.length} title{entries.length !== 1 ? 's' : ''} saved
-        </p>
+      <div className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold">My Vault</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {entries.length} title{entries.length !== 1 ? 's' : ''} saved
+          </p>
+        </div>
+        <SharePanel token={meData?.me?.shareToken ?? null} />
       </div>
 
       {entries.length === 0 ? (

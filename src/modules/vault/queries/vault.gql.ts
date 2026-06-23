@@ -32,11 +32,20 @@ export interface MeData {
     email: string;
     libraryEntries: LibraryEntry[];
     name: string | null;
+    shareToken: string | null;
     settings: {
       defaultSort: string;
       layoutPreference: string;
       preferredGenres: string[];
     } | null;
+  } | null;
+}
+
+export interface PublicLibraryData {
+  publicLibrary: {
+    ownerName: string | null;
+    ownerAvatarUrl: string | null;
+    libraryEntries: LibraryEntry[];
   } | null;
 }
 
@@ -70,6 +79,7 @@ export const ME_QUERY: TypedDocumentNode<MeData, Record<string, never>> = gql`
         updatedAt
       }
       name
+      shareToken
       settings {
         defaultSort
         layoutPreference
@@ -193,6 +203,45 @@ export const UPDATE_SETTINGS: TypedDocumentNode<
         defaultSort
         layoutPreference
         preferredGenres
+      }
+    }
+  }
+`;
+
+export const GENERATE_SHARE_TOKEN: TypedDocumentNode<
+  { generateShareToken: string },
+  Record<string, never>
+> = gql`
+  mutation GenerateShareToken {
+    generateShareToken
+  }
+`;
+
+export const REVOKE_SHARE_TOKEN: TypedDocumentNode<
+  { revokeShareToken: boolean },
+  Record<string, never>
+> = gql`
+  mutation RevokeShareToken {
+    revokeShareToken
+  }
+`;
+
+export const PUBLIC_LIBRARY_QUERY: TypedDocumentNode<
+  PublicLibraryData,
+  { token: string }
+> = gql`
+  query PublicLibrary($token: String!) {
+    publicLibrary(token: $token) {
+      ownerName
+      ownerAvatarUrl
+      libraryEntries {
+        id
+        anilistId
+        createdAt
+        isFavorite
+        personalRating
+        status
+        updatedAt
       }
     }
   }
