@@ -36,7 +36,7 @@ export const MEDIA_LIST_QUERY = `
       media(
         type: ANIME
         isAdult: false
-        format_in: [TV, MOVIE]
+        format_in: [TV, MOVIE, ONA, OVA]
         search: $search
         genre_in: $genre_in
         sort: $sort
