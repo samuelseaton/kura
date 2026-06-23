@@ -238,7 +238,7 @@ export async function getStudioDetail(id: string) {
       id: String(s.id),
       name: s.name,
       siteUrl: s.siteUrl ?? null,
-      series: (s.media?.nodes ?? [])
+      series: Array.from(new Map((s.media?.nodes ?? []).map(n => [n.id, n])).values())
         .filter(n => n.type === 'ANIME')
         .map(normalizeMedia),
     };
