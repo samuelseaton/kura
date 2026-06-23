@@ -2,6 +2,8 @@
 
 An interactive anime discovery platform for exploring anime by studio, genre, and personal taste. Live data is proxied from the AniList GraphQL API; user libraries, collections, and settings are stored in a Neon PostgreSQL database.
 
+🔗 **[Live Demo](https://kura-anime.vercel.app/)** | 🛠️ **Status: Active Development**
+
 ## Features
 
 - **Explore** — Browse thousands of anime with real-time search, genre filters, and sort options (Top Rated, Popular, Trending, Newest). Infinite scroll pagination.
