@@ -39,8 +39,8 @@ export default async function AnimeDetailPage({
         </div>
       )}
 
-      <div className="flex gap-6">
-        <div className="relative h-64 w-44 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted shadow-xl">
+      <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start sm:gap-6">
+        <div className="relative h-56 w-40 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted shadow-xl sm:h-64 sm:w-44">
           <Image
             src={anime.posterUrl}
             alt={anime.title}
@@ -50,7 +50,7 @@ export default async function AnimeDetailPage({
           />
         </div>
 
-        <div className="flex min-w-0 flex-1 flex-col gap-3 pt-2">
+        <div className="flex w-full min-w-0 flex-1 flex-col gap-3 sm:pt-2">
           <h1 className="text-2xl font-bold leading-tight">{anime.title}</h1>
 
           <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
