@@ -233,11 +233,12 @@ export async function getStudioDetail(id: string) {
       };
     }>(STUDIO_DETAIL_QUERY, { id: Number(id) });
     const s = data.Studio;
+    if (!s) return null;
     return {
       id: String(s.id),
       name: s.name,
       siteUrl: s.siteUrl ?? null,
-      series: Array.from(new Map(s.media.nodes.map(n => [n.id, n])).values())
+      series: (s.media?.nodes ?? [])
         .filter(n => n.type === 'ANIME')
         .map(normalizeMedia),
     };

@@ -1,16 +1,10 @@
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
 import { BackButton } from '@/components/ui/back-button';
 import { AnimeCard } from '@/modules/explore/components/AnimeCard';
-import { getStudioDetail, getTopStudioIds } from '@/lib/anilist';
+import { getStudioDetail } from '@/lib/anilist';
 
-export const revalidate = 86400;
-
-export async function generateStaticParams() {
-  const ids = await getTopStudioIds(50);
-  return ids.map(id => ({ id }));
-}
+export const revalidate = 3600;
 
 export default async function StudioDetailPage({
   params,
