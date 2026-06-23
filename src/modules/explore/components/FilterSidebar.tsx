@@ -90,9 +90,7 @@ export function FilterSidebar({
           Genres
         </p>
         <div className="flex flex-wrap gap-1.5">
-          {(data?.genres ?? [])
-            .filter(g => g !== 'Hentai')
-            .map(genre => {
+          {(data?.genres ?? []).map(genre => {
               const active = filter.genres.includes(genre);
               return (
                 <button

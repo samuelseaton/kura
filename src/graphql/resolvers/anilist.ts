@@ -86,7 +86,7 @@ export const anilistResolvers = {
         {},
         86400
       );
-      return data.GenreCollection;
+      return data.GenreCollection.filter(g => g !== 'Hentai');
     },
 
     studioList: async (

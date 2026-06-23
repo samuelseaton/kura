@@ -132,7 +132,7 @@ export default function VaultPage() {
                       <Link
                         key={entry.id}
                         href={`/explore/${entry.anilistId}`}
-                        className="flex items-center gap-4 rounded-xl border border-border/50 bg-card p-3 transition-colors hover:border-primary/40"
+                        className="flex items-center gap-4 rounded-xl border border-border/50 bg-card p-3 hover:border-primary/40 hover:bg-white/10"
                       >
                         <div className="relative h-16 w-12 shrink-0 overflow-hidden rounded-lg bg-muted">
                           {media && (
