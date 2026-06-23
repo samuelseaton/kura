@@ -13,7 +13,7 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force",
     "codegen": "graphql-codegen --config codegen.ts",
-    "postinstall": "prisma generate && prisma db push"
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@apollo/client": "^4.2.3",
