@@ -1,17 +1,17 @@
-import type { Metadata } from "next";
-import { Outfit } from "next/font/google";
-import "./globals.css";
-import { Navbar } from "@/components/nav/Navbar";
-import { ApolloProvider } from "@/components/providers/ApolloProvider";
-import { AuthProvider } from "@/components/providers/AuthProvider";
+import type { Metadata } from 'next';
+import { Outfit } from 'next/font/google';
+import './globals.css';
+import { Navbar } from '@/components/nav/Navbar';
+import { ApolloProvider } from '@/components/providers/ApolloProvider';
+import { AuthProvider } from '@/components/providers/AuthProvider';
 
 const outfit = Outfit({
-  variable: "--font-sans",
-  subsets: ["latin"],
+  variable: '--font-sans',
+  subsets: ['latin'],
 });
 
 export const metadata: Metadata = {
-  title: "Kura — Your Personal Anime Library",
+  title: 'Kura — Your Personal Anime Library',
   description:
     "Browse thousands of anime, track what you've watched, and build your personal collection.",
 };
@@ -27,7 +27,10 @@ export default function RootLayout({
       className={`${outfit.variable} dark h-full antialiased`}
       suppressHydrationWarning
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground" suppressHydrationWarning>
+      <body
+        className="flex min-h-full flex-col bg-background text-foreground"
+        suppressHydrationWarning
+      >
         <AuthProvider>
           <ApolloProvider>
             <Navbar />

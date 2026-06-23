@@ -1,17 +1,17 @@
-import { notFound } from "next/navigation";
-import Image from "next/image";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { AnimeCard } from "@/modules/explore/components/AnimeCard";
-import { LibraryButton } from "@/modules/vault/components/LibraryButton";
-import { Star, Tv, Calendar } from "lucide-react";
-import { getAnimeDetail, getTopAnimeIds } from "@/lib/anilist";
+import { notFound } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
+import { Badge } from '@/components/ui/badge';
+import { AnimeCard } from '@/modules/explore/components/AnimeCard';
+import { LibraryButton } from '@/modules/vault/components/LibraryButton';
+import { Star, Tv, Calendar } from 'lucide-react';
+import { getAnimeDetail, getTopAnimeIds } from '@/lib/anilist';
 
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
   const ids = await getTopAnimeIds(50);
-  return ids.map((id) => ({ id }));
+  return ids.map(id => ({ id }));
 }
 
 export default async function AnimeDetailPage({
@@ -83,7 +83,7 @@ export default async function AnimeDetailPage({
           </div>
 
           <div className="flex flex-wrap gap-1.5">
-            {anime.genres.map((g) => (
+            {anime.genres.map(g => (
               <Badge key={g} variant="secondary">
                 {g}
               </Badge>
@@ -97,7 +97,9 @@ export default async function AnimeDetailPage({
       {anime.synopsis && (
         <section className="mt-8">
           <h2 className="mb-2 text-lg font-semibold">Synopsis</h2>
-          <p className="leading-relaxed text-muted-foreground">{anime.synopsis}</p>
+          <p className="leading-relaxed text-muted-foreground">
+            {anime.synopsis}
+          </p>
         </section>
       )}
 
@@ -105,7 +107,7 @@ export default async function AnimeDetailPage({
         <section className="mt-8">
           <h2 className="mb-4 text-lg font-semibold">Main Characters</h2>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-            {anime.characters.map((c) => (
+            {anime.characters.map(c => (
               <div key={c.id} className="text-center">
                 <div className="relative mx-auto mb-1.5 h-16 w-16 overflow-hidden rounded-full border border-border/50 bg-muted">
                   {c.imageUrl && (
@@ -118,7 +120,9 @@ export default async function AnimeDetailPage({
                     />
                   )}
                 </div>
-                <p className="line-clamp-2 text-xs font-medium leading-tight">{c.name}</p>
+                <p className="line-clamp-2 text-xs font-medium leading-tight">
+                  {c.name}
+                </p>
               </div>
             ))}
           </div>
@@ -129,7 +133,7 @@ export default async function AnimeDetailPage({
         <section className="mt-8">
           <h2 className="mb-4 text-lg font-semibold">You Might Also Like</h2>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-            {anime.recommendations.map((r) => (
+            {anime.recommendations.map(r => (
               <AnimeCard
                 key={r.id}
                 id={r.id}

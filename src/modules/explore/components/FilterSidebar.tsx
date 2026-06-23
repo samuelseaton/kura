@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useQuery } from "@apollo/client/react";
-import { Search, X } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import type { MediaFilter, MediaSort } from "../hooks/useAnimeFilter";
-import { useDebounce } from "../hooks/useDebounce";
-import { useState, useEffect } from "react";
-import { GENRES_QUERY } from "../queries/animeList.gql";
+import { useQuery } from '@apollo/client/react';
+import { Search, X } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import type { MediaFilter, MediaSort } from '../hooks/useAnimeFilter';
+import { useDebounce } from '../hooks/useDebounce';
+import { useState, useEffect } from 'react';
+import { GENRES_QUERY } from '../queries/animeList.gql';
 
 const SORT_OPTIONS: { value: MediaSort; label: string }[] = [
-  { value: "SCORE_DESC", label: "Top Rated" },
-  { value: "POPULARITY_DESC", label: "Most Popular" },
-  { value: "TRENDING_DESC", label: "Trending" },
-  { value: "START_DATE_DESC", label: "Newest" },
+  { value: 'SCORE_DESC', label: 'Top Rated' },
+  { value: 'POPULARITY_DESC', label: 'Most Popular' },
+  { value: 'TRENDING_DESC', label: 'Trending' },
+  { value: 'START_DATE_DESC', label: 'Newest' },
 ];
 
 interface FilterSidebarProps {
@@ -23,7 +23,11 @@ interface FilterSidebarProps {
   onReset: () => void;
 }
 
-export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebarProps) {
+export function FilterSidebar({
+  filter,
+  onFilterChange,
+  onReset,
+}: FilterSidebarProps) {
   const { data } = useQuery<{ genres: string[] }>(GENRES_QUERY);
   const [search, setSearch] = useState(filter.search);
   const debouncedSearch = useDebounce(search, 400);
@@ -36,13 +40,13 @@ export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebar
 
   const toggleGenre = (genre: string) => {
     const next = filter.genres.includes(genre)
-      ? filter.genres.filter((g) => g !== genre)
+      ? filter.genres.filter(g => g !== genre)
       : [...filter.genres, genre];
     onFilterChange({ genres: next });
   };
 
   const hasActiveFilters =
-    filter.search || filter.genres.length > 0 || filter.sort !== "SCORE_DESC";
+    filter.search || filter.genres.length > 0 || filter.sort !== 'SCORE_DESC';
 
   return (
     <aside className="flex flex-col gap-6">
@@ -52,7 +56,7 @@ export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebar
         <Input
           placeholder="Search anime..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={e => setSearch(e.target.value)}
           className="pl-8"
         />
       </div>
@@ -68,10 +72,10 @@ export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebar
               key={value}
               onClick={() => onFilterChange({ sort: value })}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-left text-sm transition-colors",
+                'rounded-lg px-3 py-1.5 text-left text-sm transition-colors',
                 filter.sort === value
-                  ? "bg-primary/15 text-primary font-medium"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                  ? 'bg-primary/15 text-primary font-medium'
+                  : 'text-muted-foreground hover:bg-white/8 hover:text-foreground active:bg-white/12'
               )}
             >
               {label}
@@ -86,23 +90,25 @@ export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebar
           Genres
         </p>
         <div className="flex flex-wrap gap-1.5">
-          {(data?.genres ?? []).filter((g) => g !== "Hentai").map((genre) => {
-            const active = filter.genres.includes(genre);
-            return (
-              <button
-                key={genre}
-                onClick={() => toggleGenre(genre)}
-                className={cn(
-                  "rounded-full border px-2.5 py-0.5 text-xs transition-colors",
-                  active
-                    ? "border-primary bg-primary/15 text-primary"
-                    : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
-                )}
-              >
-                {genre}
-              </button>
-            );
-          })}
+          {(data?.genres ?? [])
+            .filter(g => g !== 'Hentai')
+            .map(genre => {
+              const active = filter.genres.includes(genre);
+              return (
+                <button
+                  key={genre}
+                  onClick={() => toggleGenre(genre)}
+                  className={cn(
+                    'rounded-full border px-2.5 py-0.5 text-xs transition-colors',
+                    active
+                      ? 'border-primary bg-primary/15 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
+                  )}
+                >
+                  {genre}
+                </button>
+              );
+            })}
         </div>
       </div>
 
@@ -110,10 +116,13 @@ export function FilterSidebar({ filter, onFilterChange, onReset }: FilterSidebar
       {hasActiveFilters && (
         <button
           onClick={() => {
-            setSearch("");
+            setSearch('');
             onReset();
           }}
-          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full gap-2")}
+          className={cn(
+            buttonVariants({ variant: 'outline', size: 'sm' }),
+            'w-full gap-2'
+          )}
         >
           <X className="h-3.5 w-3.5" />
           Clear filters

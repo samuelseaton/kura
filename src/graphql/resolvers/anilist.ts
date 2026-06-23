@@ -8,9 +8,13 @@ import {
   GENRE_COLLECTION_QUERY,
   STUDIO_LIST_QUERY,
   MEDIA_BY_IDS_QUERY,
-} from "@/lib/anilist";
+} from '@/lib/anilist';
 
-type AniListSort = "SCORE_DESC" | "POPULARITY_DESC" | "TRENDING_DESC" | "START_DATE_DESC";
+type AniListSort =
+  | 'SCORE_DESC'
+  | 'POPULARITY_DESC'
+  | 'TRENDING_DESC'
+  | 'START_DATE_DESC';
 
 interface MediaFilter {
   search?: string;
@@ -28,7 +32,11 @@ export const anilistResolvers = {
     ) => {
       const data = await anilistFetch<{
         Page: {
-          pageInfo: { total: number; currentPage: number; hasNextPage: boolean };
+          pageInfo: {
+            total: number;
+            currentPage: number;
+            hasNextPage: boolean;
+          };
           media: AniListMedia[];
         };
       }>(MEDIA_LIST_QUERY, {
@@ -36,7 +44,7 @@ export const anilistResolvers = {
         perPage: filter.perPage ?? 24,
         search: filter.search || undefined,
         genre_in: filter.genres?.length ? filter.genres : undefined,
-        sort: [filter.sort ?? "SCORE_DESC"],
+        sort: [filter.sort ?? 'SCORE_DESC'],
       });
 
       return {
@@ -60,15 +68,15 @@ export const anilistResolvers = {
       return {
         ...base,
         characters:
-          m.characters?.nodes?.map((c) => ({
+          m.characters?.nodes?.map(c => ({
             id: String(c.id),
             name: c.name.full,
             imageUrl: c.image?.medium ?? null,
           })) ?? [],
         recommendations:
           m.recommendations?.nodes
-            ?.filter((n) => n.mediaRecommendation)
-            .map((n) => normalizeMedia(n.mediaRecommendation!)) ?? [],
+            ?.filter(n => n.mediaRecommendation)
+            .map(n => normalizeMedia(n.mediaRecommendation!)) ?? [],
       };
     },
 
@@ -98,7 +106,7 @@ export const anilistResolvers = {
       }>(STUDIO_LIST_QUERY, { page, perPage });
 
       return {
-        items: data.Page.studios.map((s) => ({
+        items: data.Page.studios.map(s => ({
           id: String(s.id),
           name: s.name,
           favourites: s.favourites,
@@ -131,9 +139,9 @@ export const anilistResolvers = {
         id: String(s.id),
         name: s.name,
         siteUrl: s.siteUrl ?? null,
-        series: Array.from(
-          new Map(s.media.nodes.map((n) => [n.id, n])).values()
-        ).filter((n) => n.type === "ANIME").map(normalizeMedia),
+        series: Array.from(new Map(s.media.nodes.map(n => [n.id, n])).values())
+          .filter(n => n.type === 'ANIME')
+          .map(normalizeMedia),
       };
     },
   },

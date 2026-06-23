@@ -1,17 +1,24 @@
-"use client";
+'use client';
 
-import { AnimeCard } from "@/modules/explore/components/AnimeCard";
-import { AnimeCardSkeleton } from "@/modules/explore/components/AnimeCardSkeleton";
-import { FilterSidebar } from "@/modules/explore/components/FilterSidebar";
-import { useAnimeFilter } from "@/modules/explore/hooks/useAnimeFilter";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { SlidersHorizontal } from "lucide-react";
-import { useState } from "react";
+import { AnimeCard } from '@/modules/explore/components/AnimeCard';
+import { AnimeCardSkeleton } from '@/modules/explore/components/AnimeCardSkeleton';
+import { FilterSidebar } from '@/modules/explore/components/FilterSidebar';
+import { useAnimeFilter } from '@/modules/explore/hooks/useAnimeFilter';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { SlidersHorizontal } from 'lucide-react';
+import { useState } from 'react';
 
 export default function ExplorePage() {
-  const { filter, updateFilter, resetFilter, loadMore, items, hasNextPage, loading } =
-    useAnimeFilter();
+  const {
+    filter,
+    updateFilter,
+    resetFilter,
+    loadMore,
+    items,
+    hasNextPage,
+    loading,
+  } = useAnimeFilter();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
@@ -24,10 +31,10 @@ export default function ExplorePage() {
           </p>
         </div>
         <button
-          onClick={() => setSidebarOpen((o) => !o)}
+          onClick={() => setSidebarOpen(o => !o)}
           className={cn(
-            buttonVariants({ variant: "outline", size: "sm" }),
-            "gap-2 md:hidden"
+            buttonVariants({ variant: 'outline', size: 'sm' }),
+            'gap-2 md:hidden'
           )}
         >
           <SlidersHorizontal className="h-4 w-4" />
@@ -39,8 +46,8 @@ export default function ExplorePage() {
         {/* Sidebar – desktop always visible, mobile slide-in overlay */}
         <div
           className={cn(
-            "fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto bg-background p-6 shadow-xl transition-transform md:sticky md:top-[calc(3.5rem+2rem)] md:z-auto md:h-[calc(100vh-3.5rem-2rem)] md:w-56 md:shrink-0 md:translate-x-0 md:self-start md:overflow-y-auto md:bg-transparent md:p-0 md:shadow-none",
-            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            'fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto bg-background p-6 shadow-xl transition-transform md:sticky md:top-[calc(3.5rem+2rem)] md:z-auto md:h-[calc(100vh-3.5rem-2rem)] md:w-56 md:shrink-0 md:translate-x-0 md:self-start md:overflow-y-auto md:bg-transparent md:p-0 md:shadow-none',
+            sidebarOpen ? 'translate-x-0' : '-translate-x-full'
           )}
         >
           {sidebarOpen && (
@@ -74,7 +81,7 @@ export default function ExplorePage() {
           ) : (
             <>
               <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-                {items.map((item) => (
+                {items.map(item => (
                   <AnimeCard
                     key={item.id}
                     id={item.id}
@@ -96,7 +103,10 @@ export default function ExplorePage() {
                 <div className="mt-8 flex justify-center">
                   <button
                     onClick={loadMore}
-                    className={cn(buttonVariants({ variant: "outline" }), "px-8")}
+                    className={cn(
+                      buttonVariants({ variant: 'outline' }),
+                      'px-8'
+                    )}
                   >
                     Load more
                   </button>

@@ -1,26 +1,32 @@
-"use client";
+'use client';
 
-import { useQuery } from "@apollo/client/react";
-import Image from "next/image";
-import Link from "next/link";
-import { useAuthenticate } from "@neondatabase/auth-ui";
-import { ME_QUERY } from "@/modules/vault/queries/vault.gql";
-import { MEDIA_BY_IDS_QUERY } from "@/modules/explore/queries/animeList.gql";
-import { buttonVariants } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Star, BookMarked } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { useQuery } from '@apollo/client/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useAuthenticate } from '@neondatabase/auth-ui';
+import { ME_QUERY } from '@/modules/vault/queries/vault.gql';
+import { MEDIA_BY_IDS_QUERY } from '@/modules/explore/queries/animeList.gql';
+import { buttonVariants } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Star, BookMarked } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 const STATUS_LABELS: Record<string, string> = {
-  WATCHING: "Watching",
-  COMPLETED: "Completed",
-  PLAN_TO_WATCH: "Plan to Watch",
-  ON_HOLD: "On Hold",
-  DROPPED: "Dropped",
+  WATCHING: 'Watching',
+  COMPLETED: 'Completed',
+  PLAN_TO_WATCH: 'Plan to Watch',
+  ON_HOLD: 'On Hold',
+  DROPPED: 'Dropped',
 };
 
-const STATUS_ORDER = ["WATCHING", "PLAN_TO_WATCH", "COMPLETED", "ON_HOLD", "DROPPED"];
+const STATUS_ORDER = [
+  'WATCHING',
+  'PLAN_TO_WATCH',
+  'COMPLETED',
+  'ON_HOLD',
+  'DROPPED',
+];
 
 interface LibraryEntry {
   id: string;
@@ -46,11 +52,15 @@ export default function VaultPage() {
   const { user, isPending } = useAuthenticate();
 
   const { data: meData, loading: meLoading } = useQuery<{
-    me: { id: string; name: string | null; libraryEntries: LibraryEntry[] } | null;
+    me: {
+      id: string;
+      name: string | null;
+      libraryEntries: LibraryEntry[];
+    } | null;
   }>(ME_QUERY, { skip: !user });
 
   const anilistIds =
-    meData?.me?.libraryEntries.map((e) => String(e.anilistId)) ?? [];
+    meData?.me?.libraryEntries.map(e => String(e.anilistId)) ?? [];
 
   const { data: mediaData, loading: mediaLoading } = useQuery<{
     mediaByIds: MediaItem[];
@@ -78,7 +88,9 @@ export default function VaultPage() {
         <BookMarked className="h-12 w-12 text-muted-foreground/40" />
         <div>
           <h1 className="text-xl font-semibold">Your Vault</h1>
-          <p className="mt-1 text-muted-foreground">Sign in to see your saved anime</p>
+          <p className="mt-1 text-muted-foreground">
+            Sign in to see your saved anime
+          </p>
         </div>
         <Link href="/auth/sign-in" className={buttonVariants()}>
           Sign In
@@ -89,20 +101,23 @@ export default function VaultPage() {
 
   const entries = meData?.me?.libraryEntries ?? [];
   const mediaMap = new Map<number, MediaItem>(
-    (mediaData?.mediaByIds ?? []).map((m) => [Number(m.id), m])
+    (mediaData?.mediaByIds ?? []).map(m => [Number(m.id), m])
   );
 
-  const grouped = STATUS_ORDER.reduce<Record<string, LibraryEntry[]>>((acc, status) => {
-    acc[status] = entries.filter((e) => e.status === status);
-    return acc;
-  }, {});
+  const grouped = STATUS_ORDER.reduce<Record<string, LibraryEntry[]>>(
+    (acc, status) => {
+      acc[status] = entries.filter(e => e.status === status);
+      return acc;
+    },
+    {}
+  );
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
       <div className="mb-8">
         <h1 className="text-2xl font-bold">My Vault</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {entries.length} title{entries.length !== 1 ? "s" : ""} saved
+          {entries.length} title{entries.length !== 1 ? 's' : ''} saved
         </p>
       </div>
 
@@ -113,13 +128,13 @@ export default function VaultPage() {
           <p className="mt-1 text-sm text-muted-foreground">
             Start exploring and save anime to your library
           </p>
-          <Link href="/explore" className={cn(buttonVariants(), "mt-4")}>
+          <Link href="/explore" className={cn(buttonVariants(), 'mt-4')}>
             Browse Anime
           </Link>
         </div>
       ) : (
         <div className="space-y-10">
-          {STATUS_ORDER.map((status) => {
+          {STATUS_ORDER.map(status => {
             const statusEntries = grouped[status];
             if (!statusEntries?.length) return null;
 
@@ -133,7 +148,7 @@ export default function VaultPage() {
                 </h2>
 
                 <div className="space-y-3">
-                  {statusEntries.map((entry) => {
+                  {statusEntries.map(entry => {
                     const media = mediaMap.get(entry.anilistId);
                     return (
                       <Link
@@ -167,8 +182,12 @@ export default function VaultPage() {
                             </p>
                           )}
                           <div className="flex flex-wrap gap-1">
-                            {media?.genres.slice(0, 3).map((g) => (
-                              <Badge key={g} variant="secondary" className="px-1.5 py-0 text-[10px]">
+                            {media?.genres.slice(0, 3).map(g => (
+                              <Badge
+                                key={g}
+                                variant="secondary"
+                                className="px-1.5 py-0 text-[10px]"
+                              >
                                 {g}
                               </Badge>
                             ))}

@@ -1,12 +1,12 @@
-import Link from "next/link";
-import { MobileNav } from "./MobileNav";
-import { NavbarAuth } from "./NavbarAuth";
-import { KuraWordmark } from "@/components/KuraWordmark";
+import Link from 'next/link';
+import { MobileNav } from './MobileNav';
+import { NavbarAuth } from './NavbarAuth';
+import { KuraWordmark } from '@/components/KuraWordmark';
 
 const links = [
-  { href: "/explore", label: "Explore" },
-  { href: "/studios", label: "Studios" },
-  { href: "/vault", label: "Vault" },
+  { href: '/explore', label: 'Explore' },
+  { href: '/studios', label: 'Studios' },
+  { href: '/vault', label: 'Vault' },
 ];
 
 export function Navbar() {

@@ -1,8 +1,8 @@
-import Image from "next/image";
-import Link from "next/link";
-import { memo } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Star } from "lucide-react";
+import Image from 'next/image';
+import Link from 'next/link';
+import { memo } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Star } from 'lucide-react';
 
 interface AnimeCardProps {
   id: string;
@@ -57,8 +57,12 @@ export const AnimeCard = memo(function AnimeCard({
             <p className="text-xs text-muted-foreground">{studio.name}</p>
           )}
           <div className="flex flex-wrap gap-1">
-            {genres.slice(0, 3).map((genre) => (
-              <Badge key={genre} variant="secondary" className="px-1.5 py-0 text-[10px]">
+            {genres.slice(0, 3).map(genre => (
+              <Badge
+                key={genre}
+                variant="secondary"
+                className="px-1.5 py-0 text-[10px]"
+              >
                 {genre}
               </Badge>
             ))}

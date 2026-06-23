@@ -1,21 +1,21 @@
-import type { CodegenConfig } from "@graphql-codegen/cli";
+import type { CodegenConfig } from '@graphql-codegen/cli';
 
 const config: CodegenConfig = {
   overwrite: true,
-  schema: "./src/graphql/schema/typeDefs.ts",
+  schema: './src/graphql/schema/typeDefs.ts',
   generates: {
-    "src/generated/resolvers.ts": {
-      plugins: ["typescript", "typescript-resolvers"],
+    'src/generated/resolvers.ts': {
+      plugins: ['typescript', 'typescript-resolvers'],
       config: {
-        contextType: "../graphql/context#Context",
+        contextType: '../graphql/context#Context',
         useIndexSignature: true,
       },
     },
-    "src/generated/": {
-      documents: "./src/modules/**/*.{ts,tsx}",
-      preset: "client",
+    'src/generated/': {
+      documents: './src/modules/**/*.{ts,tsx}',
+      preset: 'client',
       presetConfig: {
-        gqlTagName: "gql",
+        gqlTagName: 'gql',
       },
     },
   },

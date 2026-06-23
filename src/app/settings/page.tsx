@@ -1,22 +1,22 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client/react";
-import Link from "next/link";
-import { useAuthenticate } from "@neondatabase/auth-ui";
-import { ME_QUERY, UPDATE_SETTINGS } from "@/modules/vault/queries/vault.gql";
-import { GENRES_QUERY } from "@/modules/explore/queries/animeList.gql";
-import { Input } from "@/components/ui/input";
-import { buttonVariants } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
-import { Check, Settings } from "lucide-react";
+import { useState, useEffect } from 'react';
+import { useQuery, useMutation } from '@apollo/client/react';
+import Link from 'next/link';
+import { useAuthenticate } from '@neondatabase/auth-ui';
+import { ME_QUERY, UPDATE_SETTINGS } from '@/modules/vault/queries/vault.gql';
+import { GENRES_QUERY } from '@/modules/explore/queries/animeList.gql';
+import { Input } from '@/components/ui/input';
+import { buttonVariants } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
+import { Check, Settings } from 'lucide-react';
 
 const SORT_OPTIONS = [
-  { value: "SCORE_DESC", label: "Top Rated" },
-  { value: "POPULARITY_DESC", label: "Most Popular" },
-  { value: "TRENDING_DESC", label: "Trending" },
-  { value: "START_DATE_DESC", label: "Newest" },
+  { value: 'SCORE_DESC', label: 'Top Rated' },
+  { value: 'POPULARITY_DESC', label: 'Most Popular' },
+  { value: 'TRENDING_DESC', label: 'Trending' },
+  { value: 'START_DATE_DESC', label: 'Newest' },
 ];
 
 export default function SettingsPage() {
@@ -41,22 +41,22 @@ export default function SettingsPage() {
     refetchQueries: [{ query: ME_QUERY }],
   });
 
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [preferredGenres, setPreferredGenres] = useState<string[]>([]);
-  const [defaultSort, setDefaultSort] = useState("SCORE_DESC");
+  const [defaultSort, setDefaultSort] = useState('SCORE_DESC');
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (meData?.me) {
-      setName(meData.me.name ?? "");
+      setName(meData.me.name ?? '');
       setPreferredGenres(meData.me.settings?.preferredGenres ?? []);
-      setDefaultSort(meData.me.settings?.defaultSort ?? "SCORE_DESC");
+      setDefaultSort(meData.me.settings?.defaultSort ?? 'SCORE_DESC');
     }
   }, [meData]);
 
   const toggleGenre = (genre: string) => {
-    setPreferredGenres((prev) =>
-      prev.includes(genre) ? prev.filter((g) => g !== genre) : [...prev, genre]
+    setPreferredGenres(prev =>
+      prev.includes(genre) ? prev.filter(g => g !== genre) : [...prev, genre]
     );
   };
 
@@ -84,7 +84,9 @@ export default function SettingsPage() {
         <Settings className="h-12 w-12 text-muted-foreground/40" />
         <div>
           <h1 className="text-xl font-semibold">Settings</h1>
-          <p className="mt-1 text-muted-foreground">Sign in to manage your settings</p>
+          <p className="mt-1 text-muted-foreground">
+            Sign in to manage your settings
+          </p>
         </div>
         <Link href="/auth/sign-in" className={buttonVariants()}>
           Sign In
@@ -107,12 +109,14 @@ export default function SettingsPage() {
               </label>
               <Input
                 value={name}
-                onChange={(e) => setName(e.target.value)}
+                onChange={e => setName(e.target.value)}
                 placeholder="Your name"
               />
             </div>
             <div>
-              <label className="mb-1 block text-sm text-muted-foreground">Email</label>
+              <label className="mb-1 block text-sm text-muted-foreground">
+                Email
+              </label>
               <Input value={user.email} disabled className="opacity-60" />
             </div>
           </div>
@@ -131,10 +135,10 @@ export default function SettingsPage() {
                   key={value}
                   onClick={() => setDefaultSort(value)}
                   className={cn(
-                    "rounded-full border px-3 py-1 text-sm transition-colors",
+                    'rounded-full border px-3 py-1 text-sm transition-colors',
                     defaultSort === value
-                      ? "border-primary bg-primary/15 text-primary"
-                      : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                      ? 'border-primary bg-primary/15 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
                   )}
                 >
                   {label}
@@ -148,17 +152,17 @@ export default function SettingsPage() {
               Preferred genres
             </label>
             <div className="flex flex-wrap gap-1.5">
-              {(genresData?.genres ?? []).map((genre) => {
+              {(genresData?.genres ?? []).map(genre => {
                 const active = preferredGenres.includes(genre);
                 return (
                   <button
                     key={genre}
                     onClick={() => toggleGenre(genre)}
                     className={cn(
-                      "rounded-full border px-2.5 py-0.5 text-xs transition-colors",
+                      'rounded-full border px-2.5 py-0.5 text-xs transition-colors',
                       active
-                        ? "border-primary bg-primary/15 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/50 hover:text-foreground"
+                        ? 'border-primary bg-primary/15 text-primary'
+                        : 'border-border text-muted-foreground hover:border-primary/50 hover:text-foreground'
                     )}
                   >
                     {genre}
@@ -173,7 +177,7 @@ export default function SettingsPage() {
           <button
             onClick={handleSave}
             disabled={saving}
-            className={cn(buttonVariants({ size: "sm" }), "min-w-24 gap-2")}
+            className={cn(buttonVariants({ size: 'sm' }), 'min-w-24 gap-2')}
           >
             {saved ? (
               <>
@@ -181,9 +185,9 @@ export default function SettingsPage() {
                 Saved
               </>
             ) : saving ? (
-              "Saving..."
+              'Saving...'
             ) : (
-              "Save changes"
+              'Save changes'
             )}
           </button>
         </div>

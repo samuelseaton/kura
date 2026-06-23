@@ -1,7 +1,7 @@
-import { NextRequest } from "next/server";
-import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
-import type { PrismaClient } from "@prisma/client";
+import { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import type { PrismaClient } from '@prisma/client';
 
 export interface Context {
   prisma: PrismaClient;
@@ -20,7 +20,7 @@ export async function createContext(req: NextRequest): Promise<Context> {
 
       await prisma.user.upsert({
         where: { id },
-        create: { id, email: email ?? "", name: name ?? null },
+        create: { id, email: email ?? '', name: name ?? null },
         update: { name: name ?? null },
       });
 

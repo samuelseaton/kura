@@ -1,4 +1,4 @@
-import { gql } from "graphql-tag";
+import { gql } from 'graphql-tag';
 
 export const STUDIO_LIST_QUERY = gql`
   query StudioList($page: Int, $perPage: Int) {

@@ -1,10 +1,16 @@
-import { GraphQLError } from "graphql";
-import type { Context } from "@/graphql/context";
+import { GraphQLError } from 'graphql';
+import type { Context } from '@/graphql/context';
 
-const VALID_STATUSES = ["WATCHING", "COMPLETED", "PLAN_TO_WATCH", "ON_HOLD", "DROPPED"];
+const VALID_STATUSES = [
+  'WATCHING',
+  'COMPLETED',
+  'PLAN_TO_WATCH',
+  'ON_HOLD',
+  'DROPPED',
+];
 
 function requireAuth(userId: string | null) {
-  if (!userId) throw new GraphQLError("Not authenticated");
+  if (!userId) throw new GraphQLError('Not authenticated');
   return userId;
 }
 
@@ -38,15 +44,15 @@ export const libraryResolvers = {
         where: { id: userId },
         include: {
           settings: true,
-          libraryEntries: { orderBy: { updatedAt: "desc" } },
+          libraryEntries: { orderBy: { updatedAt: 'desc' } },
           collections: {
             include: {
               items: {
                 include: { libraryEntry: true },
-                orderBy: { addedAt: "desc" },
+                orderBy: { addedAt: 'desc' },
               },
             },
-            orderBy: { createdAt: "desc" },
+            orderBy: { createdAt: 'desc' },
           },
         },
       });
@@ -60,14 +66,16 @@ export const libraryResolvers = {
         settings: user.settings
           ? {
               ...user.settings,
-              preferredGenres: JSON.parse(user.settings.preferredGenres) as string[],
+              preferredGenres: JSON.parse(
+                user.settings.preferredGenres
+              ) as string[],
             }
           : null,
         libraryEntries: user.libraryEntries.map(serializeEntry),
-        collections: user.collections.map((col) => ({
+        collections: user.collections.map(col => ({
           ...col,
           createdAt: col.createdAt.toISOString(),
-          items: col.items.map((item) => ({
+          items: col.items.map(item => ({
             ...item,
             addedAt: item.addedAt.toISOString(),
             libraryEntry: serializeEntry(item.libraryEntry),
@@ -111,11 +119,17 @@ export const libraryResolvers = {
         },
         update: {
           status: args.status,
-          ...(args.personalRating !== undefined && { personalRating: args.personalRating }),
+          ...(args.personalRating !== undefined && {
+            personalRating: args.personalRating,
+          }),
           ...(args.isFavorite !== undefined && { isFavorite: args.isFavorite }),
           ...(args.notes !== undefined && { notes: args.notes }),
-          ...(args.startedAt !== undefined && { startedAt: new Date(args.startedAt) }),
-          ...(args.completedAt !== undefined && { completedAt: new Date(args.completedAt) }),
+          ...(args.startedAt !== undefined && {
+            startedAt: new Date(args.startedAt),
+          }),
+          ...(args.completedAt !== undefined && {
+            completedAt: new Date(args.completedAt),
+          }),
         },
       });
 
@@ -128,7 +142,9 @@ export const libraryResolvers = {
       { prisma, userId }: Context
     ) => {
       const uid = requireAuth(userId);
-      await prisma.libraryEntry.deleteMany({ where: { userId: uid, anilistId } });
+      await prisma.libraryEntry.deleteMany({
+        where: { userId: uid, anilistId },
+      });
       return true;
     },
 
@@ -147,13 +163,18 @@ export const libraryResolvers = {
 
     addToCollection: async (
       _: unknown,
-      { collectionId, libraryEntryId }: { collectionId: string; libraryEntryId: string },
+      {
+        collectionId,
+        libraryEntryId,
+      }: { collectionId: string; libraryEntryId: string },
       { prisma, userId }: Context
     ) => {
       const uid = requireAuth(userId);
 
-      const collection = await prisma.collection.findFirst({ where: { id: collectionId, userId: uid } });
-      if (!collection) throw new GraphQLError("Collection not found");
+      const collection = await prisma.collection.findFirst({
+        where: { id: collectionId, userId: uid },
+      });
+      if (!collection) throw new GraphQLError('Collection not found');
 
       const item = await prisma.collectionItem.create({
         data: { collectionId, libraryEntryId },
@@ -169,13 +190,20 @@ export const libraryResolvers = {
 
     removeFromCollection: async (
       _: unknown,
-      { collectionId, libraryEntryId }: { collectionId: string; libraryEntryId: string },
+      {
+        collectionId,
+        libraryEntryId,
+      }: { collectionId: string; libraryEntryId: string },
       { prisma, userId }: Context
     ) => {
       const uid = requireAuth(userId);
-      const collection = await prisma.collection.findFirst({ where: { id: collectionId, userId: uid } });
-      if (!collection) throw new GraphQLError("Collection not found");
-      await prisma.collectionItem.deleteMany({ where: { collectionId, libraryEntryId } });
+      const collection = await prisma.collection.findFirst({
+        where: { id: collectionId, userId: uid },
+      });
+      if (!collection) throw new GraphQLError('Collection not found');
+      await prisma.collectionItem.deleteMany({
+        where: { collectionId, libraryEntryId },
+      });
       return true;
     },
 
@@ -200,24 +228,32 @@ export const libraryResolvers = {
           settings: {
             upsert: {
               create: {
-                preferredGenres: args.preferredGenres ? JSON.stringify(args.preferredGenres) : "[]",
-                defaultSort: args.defaultSort ?? "SCORE_DESC",
-                layoutPreference: args.layoutPreference ?? "grid",
+                preferredGenres: args.preferredGenres
+                  ? JSON.stringify(args.preferredGenres)
+                  : '[]',
+                defaultSort: args.defaultSort ?? 'SCORE_DESC',
+                layoutPreference: args.layoutPreference ?? 'grid',
               },
               update: {
                 ...(args.preferredGenres !== undefined && {
                   preferredGenres: JSON.stringify(args.preferredGenres),
                 }),
-                ...(args.defaultSort !== undefined && { defaultSort: args.defaultSort }),
-                ...(args.layoutPreference !== undefined && { layoutPreference: args.layoutPreference }),
+                ...(args.defaultSort !== undefined && {
+                  defaultSort: args.defaultSort,
+                }),
+                ...(args.layoutPreference !== undefined && {
+                  layoutPreference: args.layoutPreference,
+                }),
               },
             },
           },
         },
         include: {
           settings: true,
-          libraryEntries: { orderBy: { updatedAt: "desc" } },
-          collections: { include: { items: { include: { libraryEntry: true } } } },
+          libraryEntries: { orderBy: { updatedAt: 'desc' } },
+          collections: {
+            include: { items: { include: { libraryEntry: true } } },
+          },
         },
       });
 
@@ -228,14 +264,16 @@ export const libraryResolvers = {
         settings: user.settings
           ? {
               ...user.settings,
-              preferredGenres: JSON.parse(user.settings.preferredGenres) as string[],
+              preferredGenres: JSON.parse(
+                user.settings.preferredGenres
+              ) as string[],
             }
           : null,
         libraryEntries: user.libraryEntries.map(serializeEntry),
-        collections: user.collections.map((col) => ({
+        collections: user.collections.map(col => ({
           ...col,
           createdAt: col.createdAt.toISOString(),
-          items: col.items.map((item) => ({
+          items: col.items.map(item => ({
             ...item,
             addedAt: item.addedAt.toISOString(),
             libraryEntry: serializeEntry(item.libraryEntry),

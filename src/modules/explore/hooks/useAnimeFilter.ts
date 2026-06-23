@@ -1,10 +1,14 @@
-"use client";
+'use client';
 
-import { useState, useCallback, useTransition, useEffect } from "react";
-import { useQuery } from "@apollo/client/react";
-import { MEDIA_LIST_QUERY } from "../queries/animeList.gql";
+import { useState, useCallback, useTransition, useEffect } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { MEDIA_LIST_QUERY } from '../queries/animeList.gql';
 
-export type MediaSort = "SCORE_DESC" | "POPULARITY_DESC" | "TRENDING_DESC" | "START_DATE_DESC";
+export type MediaSort =
+  | 'SCORE_DESC'
+  | 'POPULARITY_DESC'
+  | 'TRENDING_DESC'
+  | 'START_DATE_DESC';
 
 export interface MediaFilter {
   search: string;
@@ -32,9 +36,9 @@ interface MediaListData {
 }
 
 const DEFAULT_FILTER: MediaFilter = {
-  search: "",
+  search: '',
   genres: [],
-  sort: "SCORE_DESC",
+  sort: 'SCORE_DESC',
 };
 
 export function useAnimeFilter() {
@@ -43,18 +47,21 @@ export function useAnimeFilter() {
   const [accItems, setAccItems] = useState<AnimeItem[]>([]);
   const [isPending, startTransition] = useTransition();
 
-  const { data, loading, fetchMore } = useQuery<MediaListData>(MEDIA_LIST_QUERY, {
-    variables: {
-      filter: {
-        search: filter.search || undefined,
-        genres: filter.genres.length ? filter.genres : undefined,
-        sort: filter.sort,
-        page: 1,
-        perPage: 24,
+  const { data, loading, fetchMore } = useQuery<MediaListData>(
+    MEDIA_LIST_QUERY,
+    {
+      variables: {
+        filter: {
+          search: filter.search || undefined,
+          genres: filter.genres.length ? filter.genres : undefined,
+          sort: filter.sort,
+          page: 1,
+          perPage: 24,
+        },
       },
-    },
-    notifyOnNetworkStatusChange: true,
-  });
+      notifyOnNetworkStatusChange: true,
+    }
+  );
 
   useEffect(() => {
     if (data?.mediaList?.items) {
@@ -65,7 +72,7 @@ export function useAnimeFilter() {
 
   const updateFilter = useCallback((patch: Partial<MediaFilter>) => {
     startTransition(() => {
-      setFilter((prev) => ({ ...prev, ...patch }));
+      setFilter(prev => ({ ...prev, ...patch }));
     });
   }, []);
 
@@ -83,7 +90,7 @@ export function useAnimeFilter() {
       },
     });
     const newItems = (result.data as MediaListData)?.mediaList?.items ?? [];
-    setAccItems((prev) => [...prev, ...newItems]);
+    setAccItems(prev => [...prev, ...newItems]);
     setPage(nextPage);
   }, [page, filter, fetchMore]);
 

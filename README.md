@@ -14,20 +14,20 @@ An interactive anime discovery platform for exploring anime by studio, genre, an
 
 ## Tech Stack
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 16 (App Router) |
-| Language | TypeScript |
-| Styling | Tailwind CSS v4 |
-| UI Components | shadcn/ui (Base UI) |
-| GraphQL Server | Apollo Server v5 |
-| GraphQL Client | Apollo Client v4 |
-| ORM | Prisma v7 (with Neon adapter) |
-| Database | Neon PostgreSQL |
-| Auth | Neon Auth (Better Auth) |
-| Anime Data | AniList GraphQL API (live, no key required) |
-| Type Generation | GraphQL Code Generator |
-| Hosting | Vercel |
+| Layer           | Technology                                  |
+| --------------- | ------------------------------------------- |
+| Framework       | Next.js 16 (App Router)                     |
+| Language        | TypeScript                                  |
+| Styling         | Tailwind CSS v4                             |
+| UI Components   | shadcn/ui (Base UI)                         |
+| GraphQL Server  | Apollo Server v5                            |
+| GraphQL Client  | Apollo Client v4                            |
+| ORM             | Prisma v7 (with Neon adapter)               |
+| Database        | Neon PostgreSQL                             |
+| Auth            | Neon Auth (Better Auth)                     |
+| Anime Data      | AniList GraphQL API (live, no key required) |
+| Type Generation | GraphQL Code Generator                      |
+| Hosting         | Vercel                                      |
 
 ## Architecture
 
@@ -99,12 +99,12 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ## Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Start development server |
-| `npm run build` | Production build |
-| `npm run db:push` | Sync Prisma schema to Neon |
-| `npm run db:studio` | Open Prisma Studio |
-| `npm run db:reset` | Wipe and re-push the database |
-| `npm run codegen` | Generate typed GraphQL hooks from schema + queries |
-| `npm run lint` | Run ESLint |
+| Command             | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| `npm run dev`       | Start development server                           |
+| `npm run build`     | Production build                                   |
+| `npm run db:push`   | Sync Prisma schema to Neon                         |
+| `npm run db:studio` | Open Prisma Studio                                 |
+| `npm run db:reset`  | Wipe and re-push the database                      |
+| `npm run codegen`   | Generate typed GraphQL hooks from schema + queries |
+| `npm run lint`      | Run ESLint                                         |

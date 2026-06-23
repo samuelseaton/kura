@@ -1,6 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
-import { Users } from "lucide-react";
+import Image from 'next/image';
+import Link from 'next/link';
+import { Users } from 'lucide-react';
 
 interface StudioCardProps {
   id: string;
@@ -9,7 +9,12 @@ interface StudioCardProps {
   coverImageUrl: string | null;
 }
 
-export function StudioCard({ id, name, favourites, coverImageUrl }: StudioCardProps) {
+export function StudioCard({
+  id,
+  name,
+  favourites,
+  coverImageUrl,
+}: StudioCardProps) {
   return (
     <Link href={`/studios/${id}`} className="group block">
       <article className="overflow-hidden rounded-xl border border-border/50 bg-card transition-all duration-200 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/5">
@@ -31,7 +36,9 @@ export function StudioCard({ id, name, favourites, coverImageUrl }: StudioCardPr
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         </div>
         <div className="p-3">
-          <h3 className="font-semibold text-sm text-foreground line-clamp-1">{name}</h3>
+          <h3 className="font-semibold text-sm text-foreground line-clamp-1">
+            {name}
+          </h3>
           <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <Users className="h-3 w-3" />
             {favourites.toLocaleString()} favourites

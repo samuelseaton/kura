@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useQuery } from "@apollo/client/react";
-import { useEffect, useState } from "react";
-import { StudioCard } from "@/modules/studios/components/StudioCard";
-import { AnimeCardSkeleton } from "@/modules/explore/components/AnimeCardSkeleton";
-import { STUDIO_LIST_QUERY } from "@/modules/studios/queries/studioList.gql";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { useQuery } from '@apollo/client/react';
+import { useEffect, useState } from 'react';
+import { StudioCard } from '@/modules/studios/components/StudioCard';
+import { AnimeCardSkeleton } from '@/modules/explore/components/AnimeCardSkeleton';
+import { STUDIO_LIST_QUERY } from '@/modules/studios/queries/studioList.gql';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface StudioItem {
   id: string;
@@ -26,9 +26,12 @@ export default function StudiosPage() {
   const [page, setPage] = useState(1);
   const [allStudios, setAllStudios] = useState<StudioItem[]>([]);
 
-  const { data, loading, error, fetchMore } = useQuery<StudioListData>(STUDIO_LIST_QUERY, {
-    variables: { page: 1, perPage: 30 },
-  });
+  const { data, loading, error, fetchMore } = useQuery<StudioListData>(
+    STUDIO_LIST_QUERY,
+    {
+      variables: { page: 1, perPage: 30 },
+    }
+  );
 
   useEffect(() => {
     if (data?.studioList?.items) {
@@ -39,9 +42,11 @@ export default function StudiosPage() {
 
   const handleLoadMore = async () => {
     const nextPage = page + 1;
-    const result = await fetchMore({ variables: { page: nextPage, perPage: 30 } });
+    const result = await fetchMore({
+      variables: { page: nextPage, perPage: 30 },
+    });
     const newStudios = (result.data as StudioListData)?.studioList?.items ?? [];
-    setAllStudios((prev) => [...prev, ...newStudios]);
+    setAllStudios(prev => [...prev, ...newStudios]);
     setPage(nextPage);
   };
 
@@ -51,7 +56,9 @@ export default function StudiosPage() {
     return (
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6">
         <h1 className="mb-2 text-2xl font-bold">Animation Studios</h1>
-        <p className="text-muted-foreground">Failed to load studios: {error.message}</p>
+        <p className="text-muted-foreground">
+          Failed to load studios: {error.message}
+        </p>
       </div>
     );
   }
@@ -72,11 +79,13 @@ export default function StudiosPage() {
           ))}
         </div>
       ) : allStudios.length === 0 ? (
-        <p className="py-24 text-center text-muted-foreground">No studios found.</p>
+        <p className="py-24 text-center text-muted-foreground">
+          No studios found.
+        </p>
       ) : (
         <>
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {allStudios.map((studio) => (
+            {allStudios.map(studio => (
               <StudioCard key={studio.id} {...studio} />
             ))}
           </div>
@@ -86,9 +95,9 @@ export default function StudiosPage() {
               <button
                 onClick={handleLoadMore}
                 disabled={loading}
-                className={cn(buttonVariants({ variant: "outline" }), "px-8")}
+                className={cn(buttonVariants({ variant: 'outline' }), 'px-8')}
               >
-                {loading ? "Loading..." : "Load more"}
+                {loading ? 'Loading...' : 'Load more'}
               </button>
             </div>
           )}

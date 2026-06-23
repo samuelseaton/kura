@@ -1,14 +1,14 @@
-import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ExternalLink, ChevronLeft } from "lucide-react";
-import { AnimeCard } from "@/modules/explore/components/AnimeCard";
-import { getStudioDetail, getTopStudioIds } from "@/lib/anilist";
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { ExternalLink, ChevronLeft } from 'lucide-react';
+import { AnimeCard } from '@/modules/explore/components/AnimeCard';
+import { getStudioDetail, getTopStudioIds } from '@/lib/anilist';
 
 export const revalidate = 86400;
 
 export async function generateStaticParams() {
   const ids = await getTopStudioIds(50);
-  return ids.map((id) => ({ id }));
+  return ids.map(id => ({ id }));
 }
 
 export default async function StudioDetailPage({
@@ -35,7 +35,7 @@ export default async function StudioDetailPage({
         <div>
           <h1 className="text-3xl font-bold">{studio.name}</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {studio.series.length} title{studio.series.length !== 1 ? "s" : ""}
+            {studio.series.length} title{studio.series.length !== 1 ? 's' : ''}
           </p>
         </div>
         {studio.siteUrl && (
@@ -52,7 +52,7 @@ export default async function StudioDetailPage({
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-        {studio.series.map((anime) => (
+        {studio.series.map(anime => (
           <AnimeCard
             key={anime.id}
             id={anime.id}

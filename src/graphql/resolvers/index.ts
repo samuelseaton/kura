@@ -1,5 +1,5 @@
-import { anilistResolvers } from "./anilist";
-import { libraryResolvers } from "./library";
+import { anilistResolvers } from './anilist';
+import { libraryResolvers } from './library';
 
 export const resolvers = {
   Query: {

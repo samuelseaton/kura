@@ -1,4 +1,4 @@
-import { gql } from "graphql-tag";
+import { gql } from 'graphql-tag';
 
 export const MEDIA_LIST_QUERY = gql`
   query MediaList($filter: MediaFilter) {

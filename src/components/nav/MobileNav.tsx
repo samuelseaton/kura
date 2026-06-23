@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { Menu } from "lucide-react";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { buttonVariants } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Link from 'next/link';
+import { Menu } from 'lucide-react';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { buttonVariants } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface NavLink {
   href: string;
@@ -16,8 +16,8 @@ export function MobileNav({ links }: { links: NavLink[] }) {
     <Sheet>
       <SheetTrigger
         className={cn(
-          "md:hidden",
-          buttonVariants({ variant: "ghost", size: "icon" })
+          'md:hidden',
+          buttonVariants({ variant: 'ghost', size: 'icon' })
         )}
       >
         <Menu className="h-5 w-5" />
