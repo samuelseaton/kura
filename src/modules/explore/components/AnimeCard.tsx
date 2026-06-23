@@ -87,7 +87,7 @@ export const AnimeCard = memo(function AnimeCard({
         <DialogContent>
           <div className="flex gap-4 p-5 pr-10">
             {/* Poster */}
-            <div className="relative h-44 w-32 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted shadow-lg">
+            <div className="relative h-36 w-24 shrink-0 overflow-hidden rounded-xl border border-border/50 bg-muted shadow-lg sm:h-44 sm:w-32">
               <Image
                 src={posterUrl}
                 alt={title}
@@ -98,8 +98,8 @@ export const AnimeCard = memo(function AnimeCard({
             </div>
 
             {/* Info */}
-            <div className="flex min-w-0 flex-col gap-2.5">
-              <h2 className="text-base font-bold leading-tight">{title}</h2>
+            <div className="flex min-w-0 flex-col gap-2">
+              <h2 className="text-sm font-bold leading-tight sm:text-base">{title}</h2>
 
               <div className="flex flex-wrap items-center gap-3 text-sm">
                 {rating !== null && (
@@ -137,7 +137,7 @@ export const AnimeCard = memo(function AnimeCard({
                 ))}
               </div>
 
-              <div className="mt-auto">
+              <div className="mt-auto self-start">
                 <LibraryButton anilistId={Number(id)} />
               </div>
             </div>
