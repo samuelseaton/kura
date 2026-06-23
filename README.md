@@ -29,6 +29,19 @@ An interactive anime discovery platform for exploring anime by studio, genre, an
 | Type Generation | GraphQL Code Generator                      |
 | Hosting         | Vercel                                      |
 
+### How it all fits together (plain English)
+
+- **Next.js** is the app framework — it serves every page, runs API routes, and does server-side rendering.
+- **AniList** is where all the anime data lives (titles, posters, ratings, genres). We fetch it live and don't store any of it ourselves.
+- **Apollo Client** is what the browser uses to query our own GraphQL API and cache results locally.
+- **Our GraphQL API** (`/api/graphql`) is a thin layer we built that proxies AniList data and reads/writes user data from the database.
+- **Neon (Postgres)** is the database — it stores accounts, vault entries (what you've saved and their statuses), and user settings.
+- **Prisma** is how our code talks to Neon — lets us write TypeScript instead of raw SQL.
+- **Neon Auth** handles sign-up, sign-in, sessions, and cookies. All auth requests go through our own `/api/auth/*` proxy so cookies are set on the correct domain.
+- **Vercel** hosts and deploys the app.
+
+**Request flow in one sentence**: Browser → Next.js → our GraphQL API → AniList (for anime data) or Neon (for user data) → back to the browser.
+
 ## Architecture
 
 ```
