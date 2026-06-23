@@ -9,33 +9,51 @@ import { ME_QUERY, REMOVE_LIBRARY_ENTRY, GENERATE_SHARE_TOKEN, REVOKE_SHARE_TOKE
 import type { LibraryEntry } from '@/modules/vault/queries/vault.gql';
 import { MEDIA_BY_IDS_QUERY } from '@/modules/explore/queries/animeList.gql';
 import type { AnimeItem } from '@/modules/explore/queries/animeList.gql';
-import { buttonVariants } from '@/components/ui/button';
+import { buttonVariants, Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Dialog, DialogContent, DialogClose } from '@/components/ui/dialog';
 import { Check, Loader2, Link2, Share2, Star, BookMarked, Trash2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 function RemoveEntryButton({ anilistId }: { anilistId: number }) {
+  const [open, setOpen] = useState(false);
   const [remove, { loading }] = useMutation(REMOVE_LIBRARY_ENTRY, {
     refetchQueries: [{ query: ME_QUERY }],
   });
 
   return (
-    <button
-      onClick={() => remove({ variables: { anilistId } })}
-      disabled={loading}
-      className={cn(
-        buttonVariants({ variant: 'ghost', size: 'icon-sm' }),
-        'shrink-0 text-muted-foreground hover:text-destructive disabled:opacity-50'
-      )}
-    >
-      {loading ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : (
-        <Trash2 className="h-4 w-4" />
-      )}
-      <span className="sr-only">Remove from library</span>
-    </button>
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        disabled={loading}
+        className={cn(
+          buttonVariants({ variant: 'ghost', size: 'sm' }),
+          'shrink-0 gap-1.5 text-muted-foreground hover:text-destructive disabled:opacity-50'
+        )}
+      >
+        {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+        Remove
+      </button>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-sm">
+          <div className="p-6 pr-10">
+            <h2 className="text-base font-semibold">Remove from vault?</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">This will remove the title from your library. You can add it back anytime.</p>
+            <div className="mt-5 flex justify-end gap-2">
+              <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+              <Button
+                variant="destructive"
+                onClick={() => { remove({ variables: { anilistId } }); setOpen(false); }}
+              >
+                Remove
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
@@ -59,6 +77,7 @@ type MediaItem = AnimeItem;
 
 function SharePanel({ token }: { token: string | null }) {
   const [copied, setCopied] = useState(false);
+  const [revokeOpen, setRevokeOpen] = useState(false);
 
   const [generate, { loading: generating }] = useMutation(GENERATE_SHARE_TOKEN, {
     refetchQueries: [ME_QUERY],
@@ -90,23 +109,43 @@ function SharePanel({ token }: { token: string | null }) {
   }
 
   return (
-    <div className="flex items-center gap-2">
-      <button
-        onClick={handleCopy}
-        className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-2')}
-      >
-        {copied ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Link2 className="h-3.5 w-3.5" />}
-        {copied ? 'Copied!' : 'Copy link'}
-      </button>
-      <button
-        onClick={() => revoke()}
-        disabled={revoking}
-        title="Revoke share link"
-        className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'text-muted-foreground hover:text-destructive')}
-      >
-        <Trash2 className="h-3.5 w-3.5" />
-      </button>
-    </div>
+    <>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={handleCopy}
+          className={cn(buttonVariants({ variant: 'outline', size: 'sm' }), 'gap-2')}
+        >
+          {copied ? <Check className="h-3.5 w-3.5 text-green-400" /> : <Link2 className="h-3.5 w-3.5" />}
+          {copied ? 'Copied!' : 'Copy link'}
+        </button>
+        <button
+          onClick={() => setRevokeOpen(true)}
+          disabled={revoking}
+          className={cn(buttonVariants({ variant: 'ghost', size: 'sm' }), 'gap-1.5 text-muted-foreground hover:text-destructive')}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+          Revoke
+        </button>
+      </div>
+
+      <Dialog open={revokeOpen} onOpenChange={setRevokeOpen}>
+        <DialogContent className="max-w-sm">
+          <div className="p-6 pr-10">
+            <h2 className="text-base font-semibold">Revoke share link?</h2>
+            <p className="mt-1.5 text-sm text-muted-foreground">Anyone with the current link will lose access. You can generate a new one anytime.</p>
+            <div className="mt-5 flex justify-end gap-2">
+              <DialogClose render={<Button variant="outline" />}>Cancel</DialogClose>
+              <Button
+                variant="destructive"
+                onClick={() => { revoke(); setRevokeOpen(false); }}
+              >
+                Revoke
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
 
