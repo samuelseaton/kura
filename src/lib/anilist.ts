@@ -1,5 +1,10 @@
 const ANILIST_URL = 'https://graphql.anilist.co';
 
+/**
+ * Sends a GraphQL request to the AniList public API.
+ * Responses are cached by Next.js for `revalidate` seconds (default 1 hour).
+ * Throws if the HTTP request fails or if AniList returns GraphQL errors.
+ */
 export async function anilistFetch<T>(
   query: string,
   variables?: Record<string, unknown>,
@@ -23,6 +28,7 @@ export async function anilistFetch<T>(
   return json.data;
 }
 
+/** Paginated anime browse/search with optional keyword, genre, and sort filters. */
 export const MEDIA_LIST_QUERY = `
   query ($page: Int, $perPage: Int, $search: String, $genre_in: [String], $sort: [MediaSort]) {
     Page(page: $page, perPage: $perPage) {
@@ -50,6 +56,7 @@ export const MEDIA_LIST_QUERY = `
   }
 `;
 
+/** Full anime detail including characters and recommendations, fetched by AniList ID. */
 export const MEDIA_DETAIL_QUERY = `
   query ($id: Int) {
     Media(id: $id, type: ANIME) {
@@ -81,6 +88,7 @@ export const MEDIA_DETAIL_QUERY = `
   }
 `;
 
+/** Studio detail including its top 50 anime by score, fetched by AniList studio ID. */
 export const STUDIO_DETAIL_QUERY = `
   query ($id: Int) {
     Studio(id: $id) {
@@ -102,12 +110,14 @@ export const STUDIO_DETAIL_QUERY = `
   }
 `;
 
+/** Fetches AniList's full genre list. Used to populate genre filter options. */
 export const GENRE_COLLECTION_QUERY = `
   query {
     GenreCollection
   }
 `;
 
+/** Paginated studio list sorted by AniList favourites count. Includes one cover image per studio. */
 export const STUDIO_LIST_QUERY = `
   query ($page: Int, $perPage: Int) {
     Page(page: $page, perPage: $perPage) {
@@ -124,6 +134,7 @@ export const STUDIO_LIST_QUERY = `
   }
 `;
 
+/** Batch-fetches anime by a list of AniList IDs. Used to enrich vault library entries with live data. */
 export const MEDIA_BY_IDS_QUERY = `
   query ($ids: [Int]) {
     Page(perPage: 50) {
